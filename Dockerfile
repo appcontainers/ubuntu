@@ -70,6 +70,7 @@ RUN echo "service ntpd start" >> ~/.bashrc && \
 echo "service rsyslog start" >> ~/.bashrc && \
 echo "service crond start" >> ~/.bashrc
 
+CMD /bin/bash
 
 #****************************
 #* Expose Applicatoin Ports *
