@@ -1,10 +1,10 @@
 ############################################################
 # Dockerfile to build the CentOS65 Base Container
-# Based on appcontainers/centos65:RawBase
+# Based on appcontainers/rawcentos65
 ############################################################
 
 # Set the base image to Centos65 Base
-FROM appcontainers/centos65:RawBase
+FROM appcontainers/rawcentos65
 
 # File Author / Maintainer
 MAINTAINER Rich Nason rnason@appcontainers.com

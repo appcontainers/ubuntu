@@ -51,6 +51,10 @@ Enable base and PHP 5.5 in Remi
     rm -f /etc/yum.repos.d/*.rpm
     rm -fr /var/cache/*
 
+**Set Runtime Variable (default command to run when lauched via docker run)**
+    
+    CMD /bin/bash
+
 **Flatten**
 
     docker export c30e102f7c51 | docker import - appcontainers/cent65
