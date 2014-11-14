@@ -7,7 +7,7 @@
   **Install the Epel, Remi, and Postgres 9.3 Repositories.**
 
     cd /etc/yum.repos.d/
-    wget http://dl.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
+    wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
     wget http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
     rpm -Uvh remi-release-6*.rpm epel-release-6*.rpm
 
@@ -57,4 +57,4 @@ Enable base and PHP 5.5 in Remi
 
 **Flatten**
 
-    docker export c30e102f7c51 | docker import - appcontainers/cent65
+    docker export c30e102f7c51 | docker import - appcontainers/cent66
