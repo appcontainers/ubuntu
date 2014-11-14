@@ -1,10 +1,10 @@
 ############################################################
 # Dockerfile to build the CentOS65 Base Container
-# Based on appcontainers/rawcentos65
+# Based on appcontainers/centos66base
 ############################################################
 
-# Set the base image to Centos65 Base
-FROM appcontainers/rawcentos65
+# Set the base image to Centos66 Base
+FROM appcontainers/centos66base
 
 # File Author / Maintainer
 MAINTAINER Rich Nason rnason@appcontainers.com
@@ -30,7 +30,7 @@ rm -fr /var/cache/*
 
 # Download and install Epel, Remi, and the Postgres 9.3 repositories.
 RUN cd /etc/yum.repos.d/ && \
-wget http://dl.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm && \
+wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm && \
 wget http://rpms.famillecollet.com/enterprise/remi-release-6.rpm && \
 rpm -Uvh remi-release-6*.rpm epel-release-6*.rpm && \
 rpm -ivh http://yum.postgresql.org/9.3/redhat/rhel-6-x86_64/pgdg-centos93-9.3-1.noarch.rpm && \
