@@ -90,7 +90,7 @@ Because we want to make this image as light weight as possible in terms of size,
     
 `CTL P` + `CTL Q`
 
-> Export and Reimport the Container note that because we started the build container with the name of cenots66build, we will use that in the export statement instead of the container ID.
+>###### Export and Reimport the Container note that because we started the build container with the name of cenots66build, we will use that in the export statement instead of the container ID.
     
 `docker export centos66build | docker import - appcontainers/centos66`
 
