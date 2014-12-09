@@ -7,23 +7,23 @@ This container is built from appcontainers/centos66base, a bare bones newly crea
 
 *Install required packages*
 
-`yum -y install net-tools vim-enhanced wget openssh-clients nfs-utils screen yum-utils ntp tar`
+    yum -y install net-tools vim-enhanced wget openssh-clients nfs-utils screen yum-utils ntp tar
 
 *Install the Epel, Remi, and Postgres 9.3 Repositories.*
 
-`cd /etc/yum.repos.d/ && \
-wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm && \
-wget http://rpms.famillecollet.com/enterprise/remi-release-6.rpm && \
-rpm -Uvh remi-release-6*.rpm epel-release-6*.rpm`
+    cd /etc/yum.repos.d/
+    wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+    wget http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
+    rpm -Uvh remi-release-6*.rpm epel-release-6*.rpm`
 
 *Modify Remi Repo to enable remi base and PHP 5.5*
 
-`sed -ie '/\[remi\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo && \
-sed -ie '/\[remi-php55\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo`
+    sed -ie '/\[remi\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo
+    sed -ie '/\[remi-php55\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo`
 
 *Install the Postres 9.3 Repository*
        
-`rpm -ivh http://yum.postgresql.org/9.3/redhat/rhel-6-x86_64/pgdg-centos93-9.3-1.noarch.rpm`
+    rpm -ivh http://yum.postgresql.org/9.3/redhat/rhel-6-x86_64/pgdg-centos93-9.3-1.noarch.rpm
 
 *Configure SSH (disabled by default, just setting parameters, in the event an image will use it)*
 
@@ -46,9 +46,9 @@ sed -ie '/\[remi-php55\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.rep
 
 `ntpdate pool.ntp.org`
 
-`echo "service ntpd start" >> ~/.bashrc && \
-echo "service rsyslog start" >> ~/.bashrc && \
-echo "service crond start" >> ~/.bashrc`
+    echo "service ntpd start" >> ~/.bashrc
+    echo "service rsyslog start" >> ~/.bashrc
+    echo "service crond start" >> ~/.bashrc`
 
 *Update the OS*
 
@@ -76,7 +76,11 @@ Because we want to make this image as light weight as possible in terms of size,
 
 >###### Run the build container
 
-`docker run -it --name centos66build -h centos66build  appcontainers/centos66build /bin/bash`
+    docker run -it \
+    --name centos66build \
+    -h centos66build  \
+    appcontainers/centos66build \
+    /bin/bash
     
 >###### The above will bring you into a running shell, because this image was built to start crond, rsyslog, and ntpd, we will want to stop those services before repackaging the image. 
 
