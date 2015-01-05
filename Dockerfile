@@ -55,6 +55,7 @@ rm -fr /var/cache/*
 RUN sed -ie 's/#UseDNS\ yes/UseDNS\ no/g' /etc/ssh/sshd_config && \
 sed -ie 's/GSSAPIAuthentication\ yes/GSSAPIAuthentication\ no/g' /etc/ssh/sshd_config && \
 sed -ie 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+ADD termcolor.sh /etc/profile.d/
 
 #************************
 #* Post Deploy Clean Up *
