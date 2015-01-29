@@ -1,4 +1,4 @@
-#  CentOS 6.6 Base Minimal Install - 242.7 MB
+#  CentOS 6.6 Base Minimal Install - 377.8 MB
 
 This container is built from appcontainers/centos66base, a bare bones newly created unaltered CentOS 6.6 Minimal Installation. No modifications or alterations outside of base were performed. Updates were not even completed. It is literally an install and package container.
 
@@ -53,6 +53,10 @@ This container is built from appcontainers/centos66base, a bare bones newly crea
 *Update the OS*
 
 `yum -y update`
+
+* Fix Passwd functionality
+
+    rpm -e cracklib-dicts --nodeps && yum -y install cracklib-dicts
 
 *Cleanup (removing the contents of /var/cache/ after a yum update or yum install will save about 150MB from the image*
 
