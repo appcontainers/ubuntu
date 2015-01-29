@@ -54,7 +54,7 @@ This container is built from appcontainers/centos66base, a bare bones newly crea
 
 `yum -y update`
 
-* Fix Passwd functionality
+*Fix Passwd functionality
 
     rpm -e cracklib-dicts --nodeps && yum -y install cracklib-dicts
 
