@@ -45,6 +45,9 @@ sed -ie '/\[remi-php55\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.rep
 #*************************
 RUN yum clean all && \
 yum -y update && \
+# Fix Passwd functionality
+rpm -e cracklib-dicts --nodeps && \
+yum -y install cracklib-dicts && \
 rm -fr /var/cache/*
 
 
@@ -53,7 +56,7 @@ rm -fr /var/cache/*
 #*************************
 # Modify SSH and SELinux
 RUN sed -ie 's/#UseDNS\ yes/UseDNS\ no/g' /etc/ssh/sshd_config && \
-sed -ie 's/GSSAPIAuthentication\ yes/GSSAPIAuthentication\ no/g' /etc/ssh/sshd_config && \
+sed -ie 's/GSSAPIAuthentication\ yes /GSSAPIAuthentication\ no/g' /etc/ssh/sshd_config && \
 sed -ie 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
 ADD termcolor.sh /etc/profile.d/
 
