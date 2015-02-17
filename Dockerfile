@@ -25,7 +25,7 @@ MAINTAINER Rich Nason rnason@appcontainers.com
 #*   Add Required Files   *
 #**************************
 # Install wget and other utils, wget is required for installing epel and remi repos
-RUN yum -y install net-tools vim-enhanced wget openssh-clients nfs-utils screen yum-utils ntp tar && \
+RUN yum -y install net-tools vim-enhanced wget openssh-clients nfs-utils screen yum-utils ntp tar git && \
 rm -fr /var/cache/*
 
 # Download and install Epel, Remi, and the Postgres 9.3 repositories.
