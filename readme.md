@@ -7,7 +7,7 @@ This container is built from appcontainers/centos66base, a bare bones newly crea
 
 *Install required packages*
 
-    yum -y install net-tools vim-enhanced wget openssh-clients nfs-utils screen yum-utils ntp tar
+    yum -y install net-tools vim-enhanced wget openssh-clients nfs-utils screen yum-utils ntp tar git
 
 *Install the Epel, Remi, and Postgres 9.3 Repositories.*
 
