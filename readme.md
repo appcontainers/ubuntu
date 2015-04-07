@@ -1,71 +1,70 @@
-# CentOS 6.6 Base Minimal Install - 395.8 MB (519.6MB Before Flatification) #
+#  CentOS 6.6 Base Minimal Install - 395.8 MB
 
-This container is built from appcontainers/centos66base, a bare bones newly created unaltered CentOS 6.6 Minimal Installation. No modifications or alterations outside of base were performed. Updates were not even completed. It is literally an install and package container.
+This container is built from appcontainers/centos66base, a bare bones newly created unaltered CentOS 6.6 Minimal Installation. No modifications or alterations outside of base were performed. Updates were not even completed. It is literally an install and package container. ***(519.6MB Before Flatification)***
 
 
->## Installation Steps:
+># Installation Steps:
 
-* Install required packages
+##Install required packages##
 
-    `yum -y install net-tools vim-enhanced wget openssh-clients nfs-utils screen yum-utils ntp tar git`
+   `yum -y install net-tools vim-enhanced wget openssh-clients nfs-utils screen yum-utils ntp tar`
 
-* Install the Epel, Remi, and Postgres 9.4 Repositories.
+##Install the Epel, Remi, and Postgres 9.4 Repositories.##
 
-    `cd /etc/yum.repos.d/`
-    `wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm`
-    `wget http://rpms.famillecollet.com/enterprise/remi-release-6.rpm`
-    `rpm -Uvh remi-release-6*.rpm epel-release-6*.rpm`
+   `cd /etc/yum.repos.d/;
+   wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm;
+   wget http://rpms.famillecollet.com/enterprise/remi-release-6.rpm;
+   rpm -Uvh remi-release-6*.rpm epel-release-6*.rpm`
 
-* Modify Remi Repo to enable remi base and PHP 5.5
+##Modify Remi Repo to enable remi base and PHP 5.5##
 
-    `sed -ie '/\[remi\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo`
-    `sed -ie '/\[remi-php55\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo`
+   `sed -ie '/\[remi\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo
+    sed -ie '/\[remi-php55\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo`
 
-* Install the Postresql 9.4 Repository
+##Install the Postres 9.4 Repository##
        
-    `rpm -ivh http://yum.postgresql.org/9.4/redhat/rhel-6-x86_64/pgdg-centos94-9.4-1.noarch.rpm`
+   `rpm -ivh http://yum.postgresql.org/9.4/redhat/rhel-6-x86_64/pgdg-centos94-9.4-1.noarch.rpm`
 
-* Configure SSH (disabled by default, just setting parameters, in the event an image will use it)
+##Configure SSH (disabled by default, just setting parameters, in the event an image will use it)##
 
-    `vim /etc/ssh/sshd_config`
+   `vim /etc/ssh/sshd_config`
 
-    ***UseDNS no***
-    ***GSSAPIAuthentication no***
+    UseDNS no
+    GSSAPIAuthentication no
 
-*Configure SELinux
+##Configure SELinux##
     
-    `vim /etc/sysconfig/selinux`
+   `vim /etc/sysconfig/selinux`
 
-    ***selinux = disabled***
+    selinux = disabled
 
-*Turn off IPTables
+##Turn off IPTables##
     
-    `chkconfig iptables off; chkconfig ip6tables off`
+   `chkconfig iptables off; chkconfig ip6tables off`
 
-*Configure NTP and set it in the bashrc so it runs when the container is started (chkconfig does not work in containers)
+##Configure NTP and set it in the bashrc so it runs when the container is started (chkconfig does not work in containers)##
 
-    `ntpdate pool.ntp.org`
+   `ntpdate pool.ntp.org`
 
-    `echo "service ntpd start" >> ~/.bashrc`
-    `echo "service rsyslog start" >> ~/.bashrc`
-    `echo "service crond start" >> ~/.bashrc`
+   `echo "service ntpd start" >> ~/.bashrc
+   echo "service rsyslog start" >> ~/.bashrc
+   echo "service crond start" >> ~/.bashrc`
 
-*Update the OS
+##Update the OS##
 
-    `yum -y update`
+   `yum -y update`
 
-*Fix Passwd functionality
+##Fix Passwd functionality##
 
-    `rpm -e cracklib-dicts --nodeps && yum -y install cracklib-dicts`
+   `rpm -e cracklib-dicts --nodeps && yum -y install cracklib-dicts`
 
-*Cleanup (removing the contents of /var/cache/ after a yum update or yum install will save about 150MB from the image
+##Cleanup (removing the contents of /var/cache/ after a yum update or yum install will save about 150MB from the image##
 
-    `rm -f /etc/yum.repos.d/*.rpm; rm -fr /var/cache/*`
+   `rm -f /etc/yum.repos.d/*.rpm; rm -fr /var/cache/*`
 
-*Copy the included Terminal CLI Color Scheme file to /etc/profile.d so that the terminal color will be included in all child images
+##Copy the included Terminal CLI Color Scheme file to /etc/profile.d so that the terminal color will be included in all child images##
 
-
-    `if [ "$PS1" ]; then
+    if [ "$PS1" ]; then
     set_prompt () {
     Last_Command=$? # Must come first!
     Blue='\[\e[01;34m\]'
@@ -103,22 +102,22 @@ This container is built from appcontainers/centos66base, a bare bones newly crea
     }
     
     PROMPT_COMMAND='set_prompt'
-    fi`
+    fi
 
-*Set Runtime Variable (default command to run when lauched via docker run)
+##Set Dockerfile Runtime command (default command to run when lauched via docker run)##
     
     CMD /bin/bash
 
->## Building the image from the dockerfile:
+># Building the image from the Dockerfile:
     
-`docker build -t appcontainers/centos66build .`
+   `docker build -t appcontainers/centos66build .`
 
 
->## Packaging the final image
+># Packaging the final image
 
 Because we want to make this image as light weight as possible in terms of size, the image is flattened in order to remove the docker build tree, removing any intermediary build containers from the image. In order to remove the reversion history, the image needs to be ran, and then exported/imported. Note that just saving the image will not remove the revision history, In order to remove the revision history, the running container must be exported and then re-imported. 
 
-*Flatten
+##Flatten##
 
 >###### Run the build container
 
@@ -127,27 +126,31 @@ Because we want to make this image as light weight as possible in terms of size,
     -h centos66build  \
     appcontainers/centos66build \
     /bin/bash
-    
->###### The above will bring you into a running shell, because this image was built to start crond, rsyslog, and ntpd, we will want to stop those services before repackaging the image. 
+ 
+   
+###### The above will bring you into a running shell, because this image was built to start crond, rsyslog, and ntpd, we will want to stop those services before repackaging the image. 
 
-    `service crond stop; service ntpd stop; service rsyslog stop`
+
+   `service crond stop; service ntpd stop; service rsyslog stop`
+
 
 >###### Detach from the container
     
-    `CTL P` + `CTL Q`
+   `CTL P` + `CTL Q`
 
->###### Export and Reimport the Container note that because we started the build container with the name of cenots66build, we will use that in the export statement instead of the container ID.
+
+###### Export and Reimport the Container note that because we started the build container with the name of cenots66build, we will use that in the export statement instead of the container ID.
+
     
-    `docker export centos66build | docker import - appcontainers/centos66`
+   `docker export centos66build | docker import - appcontainers/centos66`
 
->## Verify
+># Verify
 
 Issuing a `docker images` should now show a newly saved appcontainers/centos66 images, which can be pushed to the docker hub.
 
->## Running the container
+># Running the container
     
-    `docker run -it -d --name centos66 -h centos66 appcontainers/centos66`
+   `docker run -it -d appcontainers/centos66`
 
->## Changelog
-4/6/2015 - Updated Postgres Repository to 9.4
-
+># Dockerfile Changelog
+4/6/15 - Changed Postgres Repo from postgresql9.3 postgresql-9.4
