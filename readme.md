@@ -1,4 +1,4 @@
-#  CentOS 6.6 Base Minimal Install - 395.8 MB
+#  CentOS 6.6 Base Minimal Install - 395.8 MB (519.6MB Before Flatification)
 
 This container is built from appcontainers/centos66base, a bare bones newly created unaltered CentOS 6.6 Minimal Installation. No modifications or alterations outside of base were performed. Updates were not even completed. It is literally an install and package container.
 
