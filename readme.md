@@ -1,33 +1,33 @@
-#  CentOS 6.6 Base Minimal Install - 395.8 MB (519.6MB Before Flatification)
+# CentOS 6.6 Base Minimal Install - 395.8 MB (519.6MB Before Flatification) #
 
 This container is built from appcontainers/centos66base, a bare bones newly created unaltered CentOS 6.6 Minimal Installation. No modifications or alterations outside of base were performed. Updates were not even completed. It is literally an install and package container.
 
 
->## Installation Steps:
+>## Installation Steps: ##
 
-*Install required packages*
+* Install required packages *
 
     yum -y install net-tools vim-enhanced wget openssh-clients nfs-utils screen yum-utils ntp tar git
 
-*Install the Epel, Remi, and Postgres 9.4 Repositories.*
+* Install the Epel, Remi, and Postgres 9.4 Repositories. *
 
     cd /etc/yum.repos.d/
     wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
     wget http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
     rpm -Uvh remi-release-6*.rpm epel-release-6*.rpm`
 
-*Modify Remi Repo to enable remi base and PHP 5.5*
+* Modify Remi Repo to enable remi base and PHP 5.5 *
 
     sed -ie '/\[remi\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo
     sed -ie '/\[remi-php55\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo`
 
-*Install the Postresql 9.4 Repository*
+* Install the Postresql 9.4 Repository *
        
     rpm -ivh http://yum.postgresql.org/9.4/redhat/rhel-6-x86_64/pgdg-centos94-9.4-1.noarch.rpm
 
-*Configure SSH (disabled by default, just setting parameters, in the event an image will use it)*
+* Configure SSH (disabled by default, just setting parameters, in the event an image will use it) *
 
-`vim /etc/ssh/sshd_config `
+`vim /etc/ssh/sshd_config`
 
     UseDNS no
     GSSAPIAuthentication no
@@ -147,6 +147,6 @@ Issuing a `docker images` should now show a newly saved appcontainers/centos66 i
     
 `docker run -it -d --name centos66 -h centos66 appcontainers/centos66`
 
->##Changelog
-    *4/6/2015 - Updated Postgres Repository to 9.4
+>## Changelog
+4/6/2015 - Updated Postgres Repository to 9.4
 
