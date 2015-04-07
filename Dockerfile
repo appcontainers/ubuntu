@@ -28,12 +28,12 @@ MAINTAINER Rich Nason rnason@appcontainers.com
 RUN yum -y install net-tools vim-enhanced wget openssh-clients nfs-utils screen yum-utils ntp tar git && \
 rm -fr /var/cache/*
 
-# Download and install Epel, Remi, and the Postgres 9.3 repositories.
+# Download and install Epel, Remi, and the Postgres 9.4 repositories.
 RUN cd /etc/yum.repos.d/ && \
 wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm && \
 wget http://rpms.famillecollet.com/enterprise/remi-release-6.rpm && \
 rpm -Uvh remi-release-6*.rpm epel-release-6*.rpm && \
-rpm -ivh http://yum.postgresql.org/9.3/redhat/rhel-6-x86_64/pgdg-centos93-9.3-1.noarch.rpm && \
+rpm -ivh http://yum.postgresql.org/9.4/redhat/rhel-6-x86_64/pgdg-centos94-9.4-1.noarch.rpm && \
 rm -fr *.rpm
 
 #Enable the remi repo

@@ -1,4 +1,4 @@
-#  CentOS 6.6 Base Minimal Install - 377.8 MB
+#  CentOS 6.6 Base Minimal Install - 395.8 MB
 
 This container is built from appcontainers/centos66base, a bare bones newly created unaltered CentOS 6.6 Minimal Installation. No modifications or alterations outside of base were performed. Updates were not even completed. It is literally an install and package container.
 
@@ -9,7 +9,7 @@ This container is built from appcontainers/centos66base, a bare bones newly crea
 
     yum -y install net-tools vim-enhanced wget openssh-clients nfs-utils screen yum-utils ntp tar git
 
-*Install the Epel, Remi, and Postgres 9.3 Repositories.*
+*Install the Epel, Remi, and Postgres 9.4 Repositories.*
 
     cd /etc/yum.repos.d/
     wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
@@ -21,9 +21,9 @@ This container is built from appcontainers/centos66base, a bare bones newly crea
     sed -ie '/\[remi\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo
     sed -ie '/\[remi-php55\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo`
 
-*Install the Postres 9.3 Repository*
+*Install the Postresql 9.4 Repository*
        
-    rpm -ivh http://yum.postgresql.org/9.3/redhat/rhel-6-x86_64/pgdg-centos93-9.3-1.noarch.rpm
+    rpm -ivh http://yum.postgresql.org/9.4/redhat/rhel-6-x86_64/pgdg-centos94-9.4-1.noarch.rpm
 
 *Configure SSH (disabled by default, just setting parameters, in the event an image will use it)*
 
@@ -145,4 +145,8 @@ Issuing a `docker images` should now show a newly saved appcontainers/centos66 i
 
 >## Running the container
     
-`docker run -it -d appcontainers/centos66`
+`docker run -it -d --name centos66 -h centos66 appcontainers/centos66`
+
+>##Changelog
+    *4/6/2015 - Updated Postgres Repository to 9.4
+
