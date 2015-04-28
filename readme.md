@@ -62,6 +62,17 @@ This container is built from appcontainers/centos66base, a bare bones newly crea
 
    `rm -f /etc/yum.repos.d/*.rpm; rm -fr /var/cache/*`
 
+##Cleanup Locales##
+
+    `cd /usr/share/locale/
+    for x in `ls | grep -v -i en | grep -v -i local`;do rm -fr $x;done
+    rm -fr ca* den men wen zen 
+
+    cd /usr/lib/locale
+    localedef --list-archive | grep -v -i ^en | xargs localedef --delete-from-archive
+    mv -f locale-archive locale-archive.tmpl
+    build-locale-archive`
+
 ##Copy the included Terminal CLI Color Scheme file to /etc/profile.d so that the terminal color will be included in all child images##
 
     if [ "$PS1" ]; then
@@ -133,6 +144,8 @@ Because we want to make this image as light weight as possible in terms of size,
 
    `service crond stop; service ntpd stop; service rsyslog stop`
 
+##### Last lets remove some unneeded documentation.
+   `rm -fr /usr/share/doc/* /usr/share/man/* /usr/share/groff /usr/share/X11/ /usr/share/desktop-directories/ /usr/share/info/*`
 
 >###### Detach from the container
     

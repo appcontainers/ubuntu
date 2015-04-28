@@ -48,8 +48,16 @@ yum -y update && \
 # Fix Passwd functionality
 rpm -e cracklib-dicts --nodeps && \
 yum -y install cracklib-dicts && \
-rm -fr /var/cache/*
-
+# Remove yum cache this bad boy is 150MBish
+rm -fr /var/cache/* && \
+# Remove locales other than english
+cd /usr/share/locale/ && \
+for x in `ls | grep -v -i en | grep -v -i local`;do rm -fr $x; done && \
+rm -fr ca* den men wen zen && \
+cd /usr/lib/locale && \
+localedef --list-archive | grep -v -i ^en | xargs localedef --delete-from-archive && \
+mv -f locale-archive locale-archive.tmpl && \
+build-locale-archive
 
 #*************************
 #*  Application Install  *
@@ -65,7 +73,6 @@ ADD termcolor.sh /etc/profile.d/
 #************************
 # Set NTP
 RUN ntpdate pool.ntp.org
-
 
 #**************************
 #*  Config Startup Items  *
