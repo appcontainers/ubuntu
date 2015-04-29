@@ -167,4 +167,5 @@ Issuing a `docker images` should now show a newly saved appcontainers/centos66 i
 
 ># Dockerfile Changelog
 04/27/15 - Removed Locales other than English to conserve over 100MB
+
 04/06/15 - Changed Postgres Repo from postgresql9.3 postgresql-9.4
