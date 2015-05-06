@@ -1,77 +1,44 @@
-#  CentOS 6.6 Base Minimal Install - 271.3 MB
+#  Ubuntu 14.04 Trusty Tahr Base Minimal Install - 256.4 MB
 
-This container is built from appcontainers/centos66base, a bare bones newly created unaltered CentOS 6.6 Minimal Installation. No modifications or alterations outside of base were performed. Updates were not even completed. It is literally an install and package container. ***(519.6MB Before Flatification)***
+This container is built from appcontainers/ubuntucore, a bare bones newly created unaltered ubuntu core 14.04 LTS Minimal Installation. No modifications or alterations outside of base were performed. Updates were not even completed. It is literally an install and package container.
 
 
 ># Installation Steps:
 
+##Fix Init System (Systemd incompatability)##
+   
+   `dpkg-divert --local --rename --add /sbin/initctl && ln -sf /bin/true /sbin/initctl
+   dpkg-divert --local --rename /usr/bin/ischroot && ln -sf /bin/true /usr/bin/ischroot`
+
+##Fix the udev upgrade problem when doing an apt-get update##
+   
+   `sed -i '/###\ END\ INIT\ INFO/a exit\ 0' /etc/init.d/udev`
+
+##Update the base install##
+  
+   `apt-get clean
+   apt-get -y update
+   DEBIAN_FRONTEND=noninteractive apt-get -y upgrade`
+
 ##Install required packages##
 
-   `yum -y install net-tools vim-enhanced wget openssh-clients nfs-utils screen yum-utils ntp tar`
+   `apt-get -y install net-tools vim wget openssh-client screen ntp tar git`
 
-##Install the Epel, Remi, and Postgres 9.4 Repositories.##
-
-   `cd /etc/yum.repos.d/;
-   wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm;
-   wget http://rpms.famillecollet.com/enterprise/remi-release-6.rpm;
-   rpm -Uvh remi-release-6*.rpm epel-release-6*.rpm`
-
-##Modify Remi Repo to enable remi base and PHP 5.5##
-
-   `sed -ie '/\[remi\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo
-    sed -ie '/\[remi-php55\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo`
-
-##Install the Postres 9.4 Repository##
-       
-   `rpm -ivh http://yum.postgresql.org/9.4/redhat/rhel-6-x86_64/pgdg-centos94-9.4-1.noarch.rpm`
-
-##Configure SSH (disabled by default, just setting parameters, in the event an image will use it)##
-
-   `vim /etc/ssh/sshd_config`
-
-    UseDNS no
-    GSSAPIAuthentication no
-
-##Configure SELinux##
-    
-   `vim /etc/sysconfig/selinux`
-
-    selinux = disabled
-
-##Turn off IPTables##
-    
-   `chkconfig iptables off; chkconfig ip6tables off`
 
 ##Configure NTP and set it in the bashrc so it runs when the container is started (chkconfig does not work in containers)##
 
    `ntpdate pool.ntp.org`
 
-   `echo "service ntpd start" >> ~/.bashrc
+   `echo "service ntp start" >> ~/.bashrc
    echo "service rsyslog start" >> ~/.bashrc
-   echo "service crond start" >> ~/.bashrc`
+   echo "service cron start" >> ~/.bashrc
+   echo "source /etc/profile.d/termcolor.sh" >> ~/.bashrc`
 
-##Update the OS##
 
-   `yum -y update`
+##Cleanup (removing the contents of /var/cache/ after a apt-get update##
 
-##Fix Passwd functionality##
+   `rm -fr /var/cache/*`
 
-   `rpm -e cracklib-dicts --nodeps && yum -y install cracklib-dicts`
-
-##Cleanup (removing the contents of /var/cache/ after a yum update or yum install will save about 150MB from the image##
-
-   `rm -f /etc/yum.repos.d/*.rpm; rm -fr /var/cache/*`
-
-##Cleanup Locales##
-
-    `cd /usr/share/locale/
-    for x in `ls | grep -v -i en | grep -v -i local`;do rm -fr $x;done
-    rm -fr ca* den men wen zen 
-
-    cd /usr/lib/locale
-    localedef --list-archive | grep -v -i ^en | xargs localedef --delete-from-archive
-    mv -f locale-archive locale-archive.tmpl
-    build-locale-archive`
 
 ##Copy the included Terminal CLI Color Scheme file to /etc/profile.d so that the terminal color will be included in all child images##
 
@@ -86,8 +53,10 @@ This container is built from appcontainers/centos66base, a bare bones newly crea
     Yellow='\[\e[01;33m\]'
     Black='\[\e[01;30m\]'
     Reset='\[\e[00m\]'
-    FancyX='\342\234\227'
-    Checkmark='\342\234\223'
+    FancyX=':('
+    Checkmark=':)'
+    #FancyX='\342\234\227'
+    #Checkmark='\342\234\223'
 
     # Add a bright white exit status for the last command
     #PS1="$White\$? "
@@ -101,10 +70,10 @@ This container is built from appcontainers/centos66base, a bare bones newly crea
     # If root, just print the host in red. Otherwise, print the current user
     # and host in green.
     if [[ $EUID == 0 ]]; then
-        PS1+="$Black $YellowBack TEMPLATE $Reset $Red \\u@\\h"
+        PS1+="$Black $YellowBack UBUNTU1404 $Reset $Red \\u@\\h"
         #PS1+="$Red\\u@\\h $YellowBack DEV $Reset"
     else
-        PS1+="$Black $YellowBack TEMPLATE $Reset $Green \\u@\\h"
+        PS1+="$Black $YellowBack UBUNTU1404 $Reset $Green \\u@\\h"
         #PS1+="$Green\\u@\\h $YellowBack DEV $Reset"
     fi
     # Print the working directory and prompt marker in blue, and reset
@@ -115,13 +84,16 @@ This container is built from appcontainers/centos66base, a bare bones newly crea
     PROMPT_COMMAND='set_prompt'
     fi
 
+##change the /etc/init.d/udev file back to default (the fix to perform an apt-get upgrade)
+   `sed -i '/exit0/d' /etc/init.d/udev`
+
 ##Set Dockerfile Runtime command (default command to run when lauched via docker run)##
     
     CMD /bin/bash
 
 ># Building the image from the Dockerfile:
     
-   `docker build -t appcontainers/centos66build .`
+   `docker build -t appcontainers/ubuntubuild .`
 
 
 ># Packaging the final image
@@ -133,29 +105,29 @@ Because we want to make this image as light weight as possible in terms of size,
 >###### Run the build container
 
     docker run -it \
-    --name centos66build \
-    -h centos66build  \
-    appcontainers/centos66build \
+    --name ubuntubuild \
+    -h ubuntubuild  \
+    appcontainers/ubuntubuild \
     /bin/bash
  
    
 ###### The above will bring you into a running shell, because this image was built to start crond, rsyslog, and ntpd, we will want to stop those services before repackaging the image. 
 
 
-   `service crond stop; service ntpd stop; service rsyslog stop`
+   `service cron stop; service ntp stop; service rsyslog stop`
 
 ##### Last lets remove some unneeded documentation.
-   `rm -fr /usr/share/doc/* /usr/share/man/* /usr/share/groff /usr/share/X11/ /usr/share/desktop-directories/ /usr/share/info/*`
+   `rm -fr /usr/share/doc/* /usr/share/doc-base/* /usr/share/man/* /usr/share/X11/ /usr/share/info/*`
 
 >###### Detach from the container
     
    `CTL P` + `CTL Q`
 
 
-###### Export and Reimport the Container note that because we started the build container with the name of cenots66build, we will use that in the export statement instead of the container ID.
+###### Export and Reimport the Container note that because we started the build container with the name of ubuntubuild, we will use that in the export statement instead of the container ID.
 
     
-   `docker export centos66build | docker import - appcontainers/centos66`
+   `docker export ubuntubuild | docker import - appcontainers/ubuntu1404`
 
 ># Verify
 
@@ -163,8 +135,8 @@ Issuing a `docker images` should now show a newly saved appcontainers/centos66 i
 
 ># Running the container
     
-   `docker run -it -d appcontainers/centos66`
+   `docker run -it -d appcontainers/ubuntu1404`
 
 ># Dockerfile Changelog
-    04/27/15 - Removed Locales other than English to conserve over 100MB
-    04/06/15 - Changed Postgres Repo from postgresql9.3 postgresql-9.4
+    
+    05-06-2015 - Image Created.

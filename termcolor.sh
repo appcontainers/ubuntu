@@ -9,8 +9,10 @@ if [ "$PS1" ]; then
     Yellow='\[\e[01;33m\]'
     Black='\[\e[01;30m\]'
     Reset='\[\e[00m\]'
-    FancyX='\342\234\227'
-    Checkmark='\342\234\223'
+    FancyX=':('
+    Checkmark=':)'
+    #FancyX='\342\234\227'
+    #Checkmark='\342\234\223'
 
     # Add a bright white exit status for the last command
     #PS1="$White\$? "
@@ -24,10 +26,10 @@ if [ "$PS1" ]; then
     # If root, just print the host in red. Otherwise, print the current user
     # and host in green.
     if [[ $EUID == 0 ]]; then
-        PS1+="$Black $YellowBack TEMPLATE $Reset $Red \\u@\\h"
+        PS1+="$Black $YellowBack UBUNTU1404 $Reset $Red \\u@\\h"
         #PS1+="$Red\\u@\\h $YellowBack DEV $Reset"
     else
-        PS1+="$Black $YellowBack TEMPLATE $Reset $Green \\u@\\h"
+        PS1+="$Black $YellowBack UBUNTU1404 $Reset $Green \\u@\\h"
         #PS1+="$Green\\u@\\h $YellowBack DEV $Reset"
     fi
     # Print the working directory and prompt marker in blue, and reset

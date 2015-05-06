@@ -1,10 +1,10 @@
 ############################################################
-# Dockerfile to build the CentOS65 Base Container
-# Based on appcontainers/centos66base
+# Dockerfile to build the Ubuntu 1404 LTS Base Container
+# Based on appcontainers/ubuntucore
 ############################################################
 
-# Set the base image to Centos66 Base
-FROM appcontainers/centos66base
+# Set the base image to Ubunutu Core 14.04 LTS Base
+FROM appcontainers/ubuntucore
 
 # File Author / Maintainer
 MAINTAINER Rich Nason rnason@appcontainers.com
@@ -20,52 +20,38 @@ MAINTAINER Rich Nason rnason@appcontainers.com
 #**********************************
 
 
-
 #**************************
 #*   Add Required Files   *
 #**************************
-# Install wget and other utils, wget is required for installing epel and remi repos
-RUN yum -y install net-tools vim-enhanced wget openssh-clients nfs-utils screen yum-utils ntp tar git && \
-rm -fr /var/cache/*
 
-# Download and install Epel, Remi, and the Postgres 9.4 repositories.
-RUN cd /etc/yum.repos.d/ && \
-wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm && \
-wget http://rpms.famillecollet.com/enterprise/remi-release-6.rpm && \
-rpm -Uvh remi-release-6*.rpm epel-release-6*.rpm && \
-rpm -ivh http://yum.postgresql.org/9.4/redhat/rhel-6-x86_64/pgdg-centos94-9.4-1.noarch.rpm && \
-rm -fr *.rpm
-
-#Enable the remi repo
-RUN sed -ie '/\[remi\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo && \
-sed -ie '/\[remi-php55\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo
 
 #*************************
 #*  Update and Pre-Reqs  *
 #*************************
-RUN yum clean all && \
-yum -y update && \
-# Fix Passwd functionality
-rpm -e cracklib-dicts --nodeps && \
-yum -y install cracklib-dicts && \
+# Fix Init System
+RUN dpkg-divert --local --rename --add /sbin/initctl && ln -sf /bin/true /sbin/initctl
+RUN dpkg-divert --local --rename /usr/bin/ischroot && ln -sf /bin/true /usr/bin/ischroot
+
+# Fix the udev exit problem when doing an apt-get update
+RUN sed -i '/###\ END\ INIT\ INFO/a exit\ 0' /etc/init.d/udev
+
+RUN apt-get clean
+RUN apt-get -y update
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y upgrade
+
+# Install wget and other utils, wget is required for installing epel and remi repos
+RUN apt-get -y install net-tools vim wget openssh-client screen ntp tar git && \
+
 # Remove yum cache this bad boy is 150MBish
-rm -fr /var/cache/* && \
-# Remove locales other than english
-cd /usr/share/locale/ && \
-for x in `ls | grep -v -i en | grep -v -i local`;do rm -fr $x; done && \
-rm -fr ca* den men wen zen && \
-cd /usr/lib/locale && \
-localedef --list-archive | grep -v -i ^en | xargs localedef --delete-from-archive && \
-mv -f locale-archive locale-archive.tmpl && \
-build-locale-archive
+rm -fr /var/cache/* 
+
+# Remove the udev fix to put it back to normal
+RUN sed -i '/exit0/d' /etc/init.d/udev
 
 #*************************
 #*  Application Install  *
 #*************************
-# Modify SSH and SELinux
-RUN sed -ie 's/#UseDNS\ yes/UseDNS\ no/g' /etc/ssh/sshd_config && \
-sed -ie 's/GSSAPIAuthentication\ yes /GSSAPIAuthentication\ no/g' /etc/ssh/sshd_config && \
-sed -ie 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+# Add TermColor Script
 ADD termcolor.sh /etc/profile.d/
 
 #************************
@@ -77,9 +63,10 @@ RUN ntpdate pool.ntp.org
 #**************************
 #*  Config Startup Items  *
 #**************************
-RUN echo "service ntpd start" >> ~/.bashrc && \
+RUN echo "service ntp start" >> ~/.bashrc && \
 echo "service rsyslog start" >> ~/.bashrc && \
-echo "service crond start" >> ~/.bashrc
+echo "service cron start" >> ~/.bashrc && \
+echo "source /etc/profile.d/termcolor.sh" >> ~/.bashrc
 
 CMD /bin/bash
 
