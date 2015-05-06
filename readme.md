@@ -131,7 +131,7 @@ Because we want to make this image as light weight as possible in terms of size,
 
 ># Verify
 
-Issuing a `docker images` should now show a newly saved appcontainers/centos66 images, which can be pushed to the docker hub.
+Issuing a `docker images` should now show a newly saved appcontainers/ubuntu1404 images, which can be pushed to the docker hub.
 
 ># Running the container
     
