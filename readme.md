@@ -1,4 +1,4 @@
-#  Ubuntu 14.04 Trusty Tahr Base Minimal Install - 256.4 MB
+#  Ubuntu 14.04 Trusty Tahr Base Minimal Install - 256.4 MB - Updated 5/6/2015
 
 This container is built from appcontainers/ubuntucore, a bare bones newly created unaltered ubuntu core 14.04 LTS Minimal Installation. No modifications or alterations outside of base were performed. Updates were not even completed. It is literally an install and package container.
 

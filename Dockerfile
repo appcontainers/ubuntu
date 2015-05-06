@@ -42,7 +42,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y upgrade
 # Install wget and other utils, wget is required for installing epel and remi repos
 RUN apt-get -y install net-tools vim wget openssh-client screen ntp tar git && \
 
-# Remove yum cache this bad boy is 150MBish
+# Remove yum cache this bad boy can get big
+apt-get clean && \
 rm -fr /var/cache/* 
 
 # Remove the udev fix to put it back to normal
