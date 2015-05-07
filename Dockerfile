@@ -46,7 +46,10 @@ RUN apt-get -y install net-tools vim wget openssh-client screen ntp tar git && \
 
 # Remove yum cache this bad boy can get big
 apt-get clean && \
-rm -fr /var/cache/* 
+rm -fr /var/cache/* && \
+mkdir -p /var/cache/apt/archives && \
+touch /var/cache/apt/archives/lock && \
+mkdir -p /var/cache/apt/archives/partial
 
 # Remove the udev fix to put it back to normal
 RUN sed -i '/exit0/d' /etc/init.d/udev
