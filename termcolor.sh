@@ -26,10 +26,10 @@ if [ "$PS1" ]; then
     # If root, just print the host in red. Otherwise, print the current user
     # and host in green.
     if [[ $EUID == 0 ]]; then
-        PS1+="$Black $YellowBack UBUNTU1404 $Reset $Red \\u@\\h"
+        PS1+="$Black $YellowBack $TERMTAG $Reset $Red \\u@\\h"
         #PS1+="$Red\\u@\\h $YellowBack DEV $Reset"
     else
-        PS1+="$Black $YellowBack UBUNTU1404 $Reset $Green \\u@\\h"
+        PS1+="$Black $YellowBack $TERMTAG $Reset $Green \\u@\\h"
         #PS1+="$Green\\u@\\h $YellowBack DEV $Reset"
     fi
     # Print the working directory and prompt marker in blue, and reset

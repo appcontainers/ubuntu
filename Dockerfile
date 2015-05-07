@@ -18,6 +18,8 @@ MAINTAINER Rich Nason rnason@appcontainers.com
 #**********************************
 #* Override Enabled ENV Variables *
 #**********************************
+ENV ENV dev
+ENV TERMTAG CENTOS66
 
 
 #**************************
