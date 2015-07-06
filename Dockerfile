@@ -116,7 +116,7 @@ echo "path-exclude /usr/share/linda/*" >> /etc/dpkg/dpkg.cfg.d/01_nodoc
 
 # Remove Non America TimeZone Data
 # This can be undone via: wget 'ftp://elsie.nci.nih.gov/pub/tzdata*.tar.gz'
-RUN for x in `ls /usr/share/zoneinfo|grep -v America`; do rm -fr $x;done;
+RUN for x in `ls /usr/share/zoneinfo|grep -v America`; do rm -fr /usr/share/zoneinfo/$x;done;
 
 # Remove hardware rules (acpi, bluetooth, pci-classes, usb-classes, keyboard)
 RUN rm -fr /lib/udev/hwdb.d/*
