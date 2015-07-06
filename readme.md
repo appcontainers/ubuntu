@@ -42,7 +42,7 @@
 ##Strip out extra non english locale data##
 
     for x in `ls /usr/share/locale | grep -v en_GB`; do rm -fr /usr/share/locale/$x; done;
-    for x in `ls /usr/share/i18n/locales/ | grep -v en_`; do rm -fr $x; done
+    for x in `ls /usr/share/i18n/locales/ | grep -v en_`; do rm -fr /usr/share/i18n/locales/$x; done
 
 
 ##Remove Man Pages and Docs to preserve Space##
