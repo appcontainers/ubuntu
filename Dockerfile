@@ -90,7 +90,8 @@ RUN rm -fr /usr/share/dh-python/
 #*************************
 # Strip out Locale data
 RUN for x in `ls /usr/share/locale | grep -v en_GB`; do rm -fr /usr/share/locale/$x; done;
-RUN for x in `ls /usr/share/i18n/locales/ | grep -v en_`; do rm -fr $x; done
+RUN for x in `ls /usr/share/i18n/locales/ | grep -v en_`; do rm -fr /usr/share/i18n/locales/$x; done
+
 
 # Remove Documentation
 #RUN find /usr/share/doc -depth -type f ! -name copyright|xargs rm || true && \
