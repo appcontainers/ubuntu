@@ -1,8 +1,8 @@
-**Ubuntu 14.04 Trusty Tahr Base Minimal Install - 112 MB - Updated 7/4/2015**
+**Ubuntu 15.04 Trusty Tahr Base Minimal Install - 83 MB - Updated 7/7/2015**
 
-#  Ubuntu 14.04 Trusty Tahr Base Minimal Install - 112 MB - Updated 5/6/2015
+#  Ubuntu 15.04 Trusty Tahr Base Minimal Install - 83 MB - Updated 7/7/2015
 
-***This container is built from ubuntu:latest, (243 MB Before Flatification)***
+***This container is built from ubuntu:15.04, (153 MB Before Flatification)***
 
 
 ># Installation Steps:
@@ -157,6 +157,4 @@ Issuing a `docker images` should now show a newly saved appcontainers/ubuntu ima
 
 ># Dockerfile Changelog
     
-    07/04/2015 - Switched from Ubuntu Core, to Docker Hubs library/ubuntu.. Cleanup Image, shrank from 209MB to 117MB
-
-    05/06/2015 - Image Created.
+    07/07/2015 - Image Created.
