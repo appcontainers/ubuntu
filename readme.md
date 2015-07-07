@@ -16,6 +16,7 @@
     DEBIAN_FRONTEND=noninteractive apt-get -y install nano
 
 ##Remove un-necessary packages##
+    
     DEBIAN_FRONTEND=noninteractive apt-get -y purge \
     ubuntu-minimal \
     eject \
@@ -157,6 +158,4 @@ Issuing a `docker images` should now show a newly saved appcontainers/ubuntu ima
 
 ># Dockerfile Changelog
     
-    07/04/2015 - Switched from Ubuntu Core, to Docker Hubs library/ubuntu.. Cleanup Image, shrank from 209MB to 117MB
-
-    05/06/2015 - Image Created.
+    07/07/2015 - Image Created.

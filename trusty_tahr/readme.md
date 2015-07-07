@@ -16,6 +16,7 @@
     DEBIAN_FRONTEND=noninteractive apt-get -y install nano
 
 ##Remove un-necessary packages##
+    
     DEBIAN_FRONTEND=noninteractive apt-get -y purge \
     ubuntu-minimal \
     eject \
