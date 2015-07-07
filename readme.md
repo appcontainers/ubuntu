@@ -72,7 +72,8 @@ This can be undone via: wget 'ftp://elsie.nci.nih.gov/pub/tzdata*.tar.gz'
     for x in `ls /usr/share/zoneinfo|grep -v America`; do rm -fr /usr/share/zoneinfo/$x;done;
 
 ##Remove HW Rules (ACPI, Bluetooth, USB##
-rm -fr /lib/udev/hwdb.d/*
+
+   `rm -fr /lib/udev/hwdb.d/*`
 
 
 ##Copy the included Terminal CLI Color Scheme file to /etc/profile.d so that the terminal color will be included in all child images##
