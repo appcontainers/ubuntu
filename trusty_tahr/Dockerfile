@@ -106,6 +106,14 @@ RUN for x in `ls /usr/share/zoneinfo|grep -v America`; do rm -fr $x;done;
 # Remove hardware rules (acpi, bluetooth, pci-classes, usb-classes, keyboard)
 RUN rm -fr /lib/udev/hwdb.d/*
 
+# Disable IPV6
+RUN echo "net.ipv6.conf.all.disable_ipv6=1" > /etc/sysctl.d/disableipv6.conf && \
+echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf && \
+echo "net.ipv6.conf.default.disable_ipv6 = 1" >> /etc/sysctl.conf && \
+echo "net.ipv6.conf.lo.disable_ipv6 = 1" >> /etc/sysctl.conf && \
+echo "net.ipv6.conf.eth0.disable_ipv6 = 1" >> /etc/sysctl.conf && \
+echo "net.ipv6.conf.eth1.disable_ipv6 = 1" >> /etc/sysctl.conf
+
 #####################################################################################################################
 #*********************************************  CONFIGURE START ITEMS  **********************************************
 #####################################################################################################################
