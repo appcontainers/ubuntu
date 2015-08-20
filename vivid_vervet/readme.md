@@ -1,6 +1,11 @@
-**Ubuntu 15.04 Trusty Tahr Base Minimal Install - 83 MB - Updated 7/7/2015**
+**Ubuntu 14.04 Trusty Tahr Base Minimal Install - 112 MB - Updated 8/7/2015**
+-->  appcontainers/ubuntu:trusty
 
-#  Ubuntu 15.04 Trusty Tahr Base Minimal Install - 83 MB - Updated 7/7/2015
+**Ubuntu 15.04 Vivid Vervet Base Minimal Install - 83 MB - Updated 8/7/2015**
+-->  appcontainers/ubuntu:vivid
+
+# Ubuntu 15.04 Vivid Vervet Base Minimal Install - 83 MB - Updated 8/7/2015 (tag:latest)
+
 
 ***This container is built from ubuntu:15.04, (153 MB Before Flatification)***
 
@@ -65,6 +70,11 @@
     path-exclude /usr/share/linda/*
     EOF
 
+##Set Time Zone to EST (America/New_York)##
+    cp /etc/localtime /root/old.timezone && \
+    rm -f /etc/localtime && \
+    ln -s /usr/share/zoneinfo/America/New_York /etc/localtime
+
 ##Remove Time Zone Data Other than America##
 
 This can be undone via: wget 'ftp://elsie.nci.nih.gov/pub/tzdata*.tar.gz'
@@ -75,6 +85,13 @@ This can be undone via: wget 'ftp://elsie.nci.nih.gov/pub/tzdata*.tar.gz'
 
    `rm -fr /lib/udev/hwdb.d/*`
 
+##Turn off IPV6##
+    echo "net.ipv6.conf.all.disable_ipv6=1" > /etc/sysctl.d/disableipv6.conf && \
+    echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf && \
+    echo "net.ipv6.conf.default.disable_ipv6 = 1" >> /etc/sysctl.conf && \
+    echo "net.ipv6.conf.lo.disable_ipv6 = 1" >> /etc/sysctl.conf && \
+    echo "net.ipv6.conf.eth0.disable_ipv6 = 1" >> /etc/sysctl.conf && \
+    echo "net.ipv6.conf.eth1.disable_ipv6 = 1" >> /etc/sysctl.conf
 
 ##Copy the included Terminal CLI Color Scheme file to /etc/profile.d so that the terminal color will be included in all child images##
 
@@ -159,4 +176,6 @@ Issuing a `docker images` should now show a newly saved appcontainers/ubuntu ima
 
 ># Dockerfile Changelog
     
+    08/07/2015 - Updated image, set to tag latest, disable IPV6.
+
     07/07/2015 - Image Created.
