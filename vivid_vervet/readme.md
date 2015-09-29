@@ -1,13 +1,13 @@
-**Ubuntu 14.04 Trusty Tahr Base Minimal Install - 112 MB - Updated 8/7/2015**
+**Ubuntu 14.04 Trusty Tahr Base Minimal Install - 112 MB - Updated 9/29/2015**
 -->  appcontainers/ubuntu:trusty
 
-**Ubuntu 15.04 Vivid Vervet Base Minimal Install - 83 MB - Updated 8/7/2015**
+**Ubuntu 15.04 Vivid Vervet Base Minimal Install - 83 MB - Updated 9/29/2015**
 -->  appcontainers/ubuntu:vivid
 
 # Ubuntu 15.04 Vivid Vervet Base Minimal Install - 83 MB - Updated 8/7/2015 (tag:latest)
 
 
-***This container is built from ubuntu:15.04, (153 MB Before Flatification)***
+***This container is built from ubuntu:15.04, (154 MB Before Flatification)***
 
 
 ># Installation Steps:
@@ -131,6 +131,11 @@ This can be undone via: wget 'ftp://elsie.nci.nih.gov/pub/tzdata*.tar.gz'
     PROMPT_COMMAND='set_prompt'
     fi
 
+##Add the following to prevent any additions to the .bashrc from being executed via SSH or SCP sessions
+    echo -e "\nif [[ -n \"\$SSH_CLIENT\" || -n \"\$SSH_TTY\" ]]; then\n\treturn;\nfi\n" >> /root/.bashrc && \
+    echo -e "\nif [[ -n \"\$SSH_CLIENT\" || -n \"\$SSH_TTY\" ]]; then\n\treturn;\nfi\n" >> /etc/skel/.bashrc
+
+
 ##Set Dockerfile Runtime command (default command to run when lauched via docker run)##
     
     CMD /bin/bash
@@ -175,7 +180,9 @@ Issuing a `docker images` should now show a newly saved appcontainers/ubuntu ima
 
 
 ># Dockerfile Changelog
-    
+
+    09/29/2015 - Add Line to .bashrc to prevent additions to the basrc to be run from SSH/SCP login
+
     08/07/2015 - Updated image, set to tag latest, disable IPV6.
 
     07/07/2015 - Image Created.

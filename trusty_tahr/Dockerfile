@@ -126,8 +126,12 @@ echo "net.ipv6.conf.eth1.disable_ipv6 = 1" >> /etc/sysctl.conf
 ADD termcolor.sh /etc/profile.d/PS1.sh
 RUN chmod +x /etc/profile.d/PS1.sh && \
 echo "source /etc/profile.d/PS1.sh" >> /root/.bashrc && \
-echo "source /etc/profile.d/PS1.sh" >> /etc/skel/.bashrc && \
-echo "alias vim='nano'" >> /root/.bashrc
+echo "source /etc/profile.d/PS1.sh" >> /etc/skel/.bashrc
+# echo "alias vim='nano'" >> /root/.bashrc
+
+# Add the following to prevent any additions to the .bashrc from being executed via SSH or SCP sessions
+RUN echo "\nif [[ -n \"\$SSH_CLIENT\" || -n \"\$SSH_TTY\" ]]; then\n\treturn;\nfi\n" >> /root/.bashrc && \
+echo "\nif [[ -n \"\$SSH_CLIENT\" || -n \"\$SSH_TTY\" ]]; then\n\treturn;\nfi\n" >> /etc/skel/.bashrc
 
 CMD /bin/bash
 
