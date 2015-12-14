@@ -1,13 +1,13 @@
-**Ubuntu 14.04 Trusty Tahr Base Minimal Install - 112 MB - Updated 9/29/2015**
+**Ubuntu 14.04 Trusty Tahr Base Minimal Install - 116 MB - Updated 12/14/2015 (tags: trusty)**
 -->  appcontainers/ubuntu:trusty
 
-**Ubuntu 15.04 Vivid Vervet Base Minimal Install - 83 MB - Updated 9/29/2015**
--->  appcontainers/ubuntu:vivid
+**Ubuntu 15.010 Wily Werewolf Base Minimal Install - 88 MB - Updated 12/14/2015 (tags: wily, latest)**
+-->  appcontainers/ubuntu:wily
 
-# Ubuntu 15.04 Vivid Vervet Base Minimal Install - 83 MB - Updated 8/7/2015 (tag:latest)
+# Ubuntu 15.10 Wily Werewolf Base Minimal Install - 88 MB - Updated 12/14/2015 (tag: wily, latest)
 
 
-***This container is built from ubuntu:15.04, (154 MB Before Flatification)***
+***This container is built from ubuntu:15.04, (156 MB Before Flatification)***
 
 
 ># Installation Steps:
@@ -74,16 +74,6 @@
     cp /etc/localtime /root/old.timezone && \
     rm -f /etc/localtime && \
     ln -s /usr/share/zoneinfo/America/New_York /etc/localtime
-
-##Remove Time Zone Data Other than America##
-
-This can be undone via: wget 'ftp://elsie.nci.nih.gov/pub/tzdata*.tar.gz'
-   
-    for x in `ls /usr/share/zoneinfo|grep -v America`; do rm -fr /usr/share/zoneinfo/$x;done;
-
-##Remove HW Rules (ACPI, Bluetooth, USB##
-
-   `rm -fr /lib/udev/hwdb.d/*`
 
 ##Turn off IPV6##
     echo "net.ipv6.conf.all.disable_ipv6=1" > /etc/sysctl.d/disableipv6.conf && \
@@ -180,6 +170,8 @@ Issuing a `docker images` should now show a newly saved appcontainers/ubuntu ima
 
 
 ># Dockerfile Changelog
+
+    12/14/2015 - Replaced Vivid with 15.10 Wily
 
     09/29/2015 - Add Line to .bashrc to prevent additions to the basrc to be run from SSH/SCP login
 

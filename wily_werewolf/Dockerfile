@@ -1,13 +1,13 @@
 ############################################################
-# Dockerfile to build the Ubuntu 15.04 LTS Base Container
-# Based on: ubuntu:15.04
+# Dockerfile to build the Ubuntu 15.10 Base Container
+# Based on: ubuntu:15.10
 # DATE: 07/07/15
 # COPYRIGHT: Appcontainers.com
 ############################################################
 
 # Set the base image in namespace/repo format. 
 # To use repos that are not on the docker hub use the example.com/namespace/repo format.
-FROM library/ubuntu:15.04
+FROM library/ubuntu:15.10
 
 # File Author / Maintainer
 MAINTAINER Rich Nason rnason@appcontainers.com
@@ -21,7 +21,7 @@ MAINTAINER Rich Nason rnason@appcontainers.com
 #***************  OVERRIDE ENABLED ENV VARIABLES  *****************
 ###################################################################
 
-ENV TERMTAG UBUNTU15.04
+ENV TERMTAG UBUNTU15.10
 
 ###################################################################
 #******************  ADD REQUIRED APP FILES  **********************
@@ -100,17 +100,10 @@ echo "# lintian stuff is small, but really unnecessary" >> /etc/dpkg/dpkg.cfg.d/
 echo "path-exclude /usr/share/lintian/*" >> /etc/dpkg/dpkg.cfg.d/01_nodoc && \
 echo "path-exclude /usr/share/linda/*" >> /etc/dpkg/dpkg.cfg.d/01_nodoc
 
-#Remove Non America TimeZone Data
-# This can be undone via: wget 'ftp://elsie.nci.nih.gov/pub/tzdata*.tar.gz'
-RUN for x in `ls /usr/share/zoneinfo|grep -v America`; do rm -fr $x;done;
-
 # Set the default Timezone to EST
 RUN cp /etc/localtime /root/old.timezone && \
 rm -f /etc/localtime && \
 ln -s /usr/share/zoneinfo/America/New_York /etc/localtime
-
-# Remove hardware rules (acpi, bluetooth, pci-classes, usb-classes, keyboard)
-RUN rm -fr /lib/udev/hwdb.d/*
 
 # Disable IPV6
 RUN echo "net.ipv6.conf.all.disable_ipv6=1" > /etc/sysctl.d/disableipv6.conf && \
@@ -175,3 +168,10 @@ CMD /bin/bash
 #path-exclude /usr/share/linda/*
 #EOF
 ###################################################################
+
+#Remove Non America TimeZone Data
+# This can be undone via: wget 'ftp://elsie.nci.nih.gov/pub/tzdata*.tar.gz'
+# RUN for x in `ls /usr/share/zoneinfo|grep -v America`; do rm -fr $x;done;
+
+# Remove hardware rules (acpi, bluetooth, pci-classes, usb-classes, keyboard)
+# RUN rm -fr /lib/udev/hwdb.d/*
