@@ -1,180 +1,31 @@
-**Ubuntu 14.04 Trusty Tahr Base Minimal Install - 116 MB - Updated 12/14/2015 (tags: trusty)**
--->  appcontainers/ubuntu:trusty
-
-**Ubuntu 15.010 Wily Werewolf Base Minimal Install - 88 MB - Updated 12/14/2015 (tags: wily, latest)**
--->  appcontainers/ubuntu:wily
-
-# Ubuntu 15.10 Wily Werewolf Base Minimal Install - 88 MB - Updated 12/14/2015 (tag: wily, latest)
+**Ubuntu trusty/vivid/wily Base Minimal Install - Updated 12/14/2015**
 
 
-***This container is built from ubuntu:15.04, (156 MB Before Flatification)***
+**Ubuntu 15.10 Wily Werewolf Base Minimal Install - 88 MB - Updated 12/14/2015**
+>**Built from ubuntu:15.10**
 
+> appcontainers/ubuntu:latest
+> appcontainers/ubuntu:wily
 
-># Installation Steps:
+>##### In Depth Container Details, and Changelog can be found here:
+http://www.appcontainers.com/ubuntuwily
 
-##Turn on Apt Progress Output##
-   
-    echo 'Dpkg::Progress-Fancy "1";' | tee -a /etc/apt/apt.conf.d/99progressbar
+&nbsp;
 
-##Install required packages##
+**Ubuntu 15.04 Vivid Vervet Base Minimal Install - 116 MB - Updated 09/29/2015**
+>**Built from ubuntu:15.04**
 
-    DEBIAN_FRONTEND=noninteractive apt-get -y install nano
+> appcontainers/ubuntu:vivid
 
-##Remove un-necessary packages##
-    
-    DEBIAN_FRONTEND=noninteractive apt-get -y purge \
-    ubuntu-minimal \
-    eject \
-    isc-dhcp-common \
-    isc-dhcp-client \
-    kbd \
-    console-setup \
-    xkb-data \
-    vim-common \
-    vim-tiny \
-    bzip2 \
-    apt-utils \
-    python3.4 \
-    python3-minimal \
-    python3.4-minimal \
-    libpython3-stdlib:amd64 \
-    libpython3.4-minimal:amd64 \
-    libpython3.4-stdlib:amd64 \
-    keyboard-configuration && \
-    
-    DEBIAN_FRONTEND=noninteractive apt-get -y autoremove
+>##### In Depth Container Details, and Changelog can be found here:
+http://www.appcontainers.com/ubuntuvivid
 
+&nbsp;
 
-##Strip out extra non english locale data##
+**Ubuntu 14.04 Trusty Tahr Base Minimal Install - 116 MB - Updated 12/14/2015**
+>**Built from ubuntu:latest**
 
-    for x in `ls /usr/share/locale | grep -v en_GB`; do rm -fr /usr/share/locale/$x; done;
-    for x in `ls /usr/share/i18n/locales/ | grep -v en_`; do rm -fr /usr/share/i18n/locales/$x; done
+> appcontainers/ubuntu:trusty
 
-
-##Remove Man Pages and Docs to preserve Space##
-
-    rm -fr /usr/share/doc/* /usr/share/man/* /usr/share/groff/* /usr/share/info/*
-    rm -rf /usr/share/lintian/* /usr/share/linda/* /var/cache/man/*
-
-
-##Set documentation generation to off for future installed packages##
-       
-    cat > /etc/dpkg/dpkg.cfg.d/01_nodoc << "EOF"
-    # This config file will prevent packages from install docs that are not needed.
-    path-exclude /usr/share/doc/*
-    path-exclude /usr/share/man/*
-    path-exclude /usr/share/groff/*
-    path-exclude /usr/share/info/*
-    # lintian stuff is small, but really unnecessary
-    path-exclude /usr/share/lintian/*
-    path-exclude /usr/share/linda/*
-    EOF
-
-##Set Time Zone to EST (America/New_York)##
-    cp /etc/localtime /root/old.timezone && \
-    rm -f /etc/localtime && \
-    ln -s /usr/share/zoneinfo/America/New_York /etc/localtime
-
-##Turn off IPV6##
-    echo "net.ipv6.conf.all.disable_ipv6=1" > /etc/sysctl.d/disableipv6.conf && \
-    echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf && \
-    echo "net.ipv6.conf.default.disable_ipv6 = 1" >> /etc/sysctl.conf && \
-    echo "net.ipv6.conf.lo.disable_ipv6 = 1" >> /etc/sysctl.conf && \
-    echo "net.ipv6.conf.eth0.disable_ipv6 = 1" >> /etc/sysctl.conf && \
-    echo "net.ipv6.conf.eth1.disable_ipv6 = 1" >> /etc/sysctl.conf
-
-##Copy the included Terminal CLI Color Scheme file to /etc/profile.d so that the terminal color will be included in all child images##
-
-    if [ "$PS1" ]; then
-    set_prompt () {
-    Last_Command=$? # Must come first!
-    Blue='\[\e[01;34m\]'
-    White='\[\e[01;37m\]'
-    Red='\[\e[01;31m\]'
-    YellowBack='\[\e[01;43m\]'
-    Green='\[\e[01;32m\]'
-    Yellow='\[\e[01;33m\]'
-    Black='\[\e[01;30m\]'
-    Reset='\[\e[00m\]'
-    FancyX=':('
-    Checkmark=':)'
-
-    # If it was successful, print a green check mark. Otherwise, print
-    # a red X.
-    if [[ $Last_Command == 0 ]]; then
-        PS1="$Green$Checkmark "
-    else
-        PS1="$Red$FancyX "
-    fi
-    # If root, just print the host in red. Otherwise, print the current user
-    # and host in green.
-    if [[ $EUID == 0 ]]; then
-        PS1+="$Black $YellowBack $TERMTAG $Reset $Red \\u@\\h"
-    else
-        PS1+="$Black $YellowBack $TERMTAG $Reset $Green \\u@\\h"
-    fi
-    # Print the working directory and prompt marker in blue, and reset
-    # the text color to the default.
-    PS1+="$Blue\\w \\\$$Reset "
-    }
-    
-    PROMPT_COMMAND='set_prompt'
-    fi
-
-##Add the following to prevent any additions to the .bashrc from being executed via SSH or SCP sessions
-    echo -e "\nif [[ -n \"\$SSH_CLIENT\" || -n \"\$SSH_TTY\" ]]; then\n\treturn;\nfi\n" >> /root/.bashrc && \
-    echo -e "\nif [[ -n \"\$SSH_CLIENT\" || -n \"\$SSH_TTY\" ]]; then\n\treturn;\nfi\n" >> /etc/skel/.bashrc
-
-
-##Set Dockerfile Runtime command (default command to run when lauched via docker run)##
-    
-    CMD /bin/bash
-
-># Building the image from the Dockerfile:
-    
-   `docker build -t build/ubuntu .`
-
-
-># Packaging the final image
-
-Because we want to make this image as light weight as possible in terms of size, the image is flattened in order to remove the docker build tree, removing any intermediary build containers from the image. In order to remove the reversion history, the image needs to be ran, and then exported/imported. Note that just saving the image will not remove the revision history, In order to remove the revision history, the running container must be exported and then re-imported. 
-
-##Flatten##
-
->###### Run the build container
-
-    docker run -it \
-    --name ubuntubuild \
-    -h ubuntubuild  \
-    build/ubuntu \
-    /bin/bash
- 
-   
-###### The above will bring you into a running shell, So Detach from the container
-    
-   `CTL P` + `CTL Q`
-
-
-###### Export and Reimport the Container note that because we started the build container with the name of ubnutubuild, we will use that in the export statement instead of the container ID.
-
-    
-    docker export ubuntubuild | docker import - appcontainers/ubuntu:latest
-
-># Verify
-
-Issuing a `docker images` should now show a newly saved appcontainers/ubuntu image, which can be pushed to the docker hub.
-
-># Running the container
-    
-   `docker run -it -d appcontainers/ubuntu`
-
-
-># Dockerfile Changelog
-
-    12/14/2015 - Replaced Vivid with 15.10 Wily
-
-    09/29/2015 - Add Line to .bashrc to prevent additions to the basrc to be run from SSH/SCP login
-
-    08/07/2015 - Updated image, set to tag latest, disable IPV6.
-
-    07/07/2015 - Image Created.
+>##### In Depth Container Details, and Changelog can be found here:
+http://www.appcontainers.com/ubuntutrusty
