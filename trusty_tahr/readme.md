@@ -9,7 +9,7 @@
 echo 'Dpkg::Progress-Fancy "1";' | tee -a /etc/apt/apt.conf.d/99progressbar
 ```
 
-### Install required packages 
+### Install required packages
 ```bash
 DEBIAN_FRONTEND=noninteractive apt-get -y install nano
 ```
@@ -112,7 +112,7 @@ if [ "$PS1" ]; then
     else
         PS1="$Red$FancyX "
     fi
-    
+
     # If root, just print the host in red. Otherwise, print the current user
     # and host in green.
     if [[ $EUID == 0 ]]; then
@@ -120,7 +120,7 @@ if [ "$PS1" ]; then
     else
         PS1+="$Black $YellowBack $TERMTAG $Reset $Green \\u@\\h"
     fi
-    
+
     # Print the working directory and prompt marker in blue, and reset
     # the text color to the default.
     PS1+="$Blue\\w \\\$$Reset "
@@ -139,7 +139,7 @@ echo -e "\nif [[ -n \"\$SSH_CLIENT\" || -n \"\$SSH_TTY\" ]]; then\n\treturn;\nfi
 
 ### Set Dockerfile Runtime command
 ***Default command to run when lauched via docker run***
-    
+
 ```bash
 CMD /bin/bash
 ```
@@ -168,7 +168,7 @@ docker run -it -d \
 build/ubuntu \
 /bin/bash
 ```
- 
+
 ***The run statement should start a detached container, however if you are attached, detach from the container***  
 `CTL P` + `CTL Q`
 
@@ -184,7 +184,7 @@ docker export ubuntu | docker import - appcontainers/ubuntu:trusty
 Issuing a `docker images` should now show a newly saved appcontainers/ubuntu:trusty image, which can be pushed to the docker hub.
 
 ***Run the container***
-    
+
 ```bash
 docker run -it -d appcontainers/ubuntu:trusty
 ```
@@ -193,6 +193,7 @@ docker run -it -d appcontainers/ubuntu:trusty
 
 ># Dockerfile Changelog:
 
+    06/11/2016 - Updates
     12/14/2015 - Updates
     09/29/2015 - Add Line to .bashrc to prevent additions to the basrc to be run from SSH/SCP login
     08/07/2015 - Disable IPV6

@@ -1,5 +1,5 @@
-## Ubuntu 15.010 Wily Werewolf Base Minimal Install - 88 MB - Updated 12/14/2015 (tags: wily, latest)  
-***This container is built from ubuntu:15.10, (156 MB Before Flatification)***
+## Ubuntu 16.04 Xenial Xerus Base Minimal Install - 76 MB - Updated 06/11/2016 (tags: xenial, latest)  
+***This container is built from ubuntu:16.04, (156 MB Before Flatification)***
 
 ># Installation Steps:
 
@@ -112,7 +112,7 @@ if [ "$PS1" ]; then
     else
         PS1="$Red$FancyX "
     fi
-    
+
     # If root, just print the host in red. Otherwise, print the current user
     # and host in green.
     if [[ $EUID == 0 ]]; then
@@ -120,7 +120,7 @@ if [ "$PS1" ]; then
     else
         PS1+="$Black $YellowBack $TERMTAG $Reset $Green \\u@\\h"
     fi
-    
+
     # Print the working directory and prompt marker in blue, and reset
     # the text color to the default.
     PS1+="$Blue\\w \\\$$Reset "
@@ -139,7 +139,7 @@ echo -e "\nif [[ -n \"\$SSH_CLIENT\" || -n \"\$SSH_TTY\" ]]; then\n\treturn;\nfi
 
 ### Set Dockerfile Runtime command
 ***Default command to run when lauched via docker run***
-    
+
 ```bash
 CMD /bin/bash
 ```
@@ -168,7 +168,7 @@ docker run -it -d \
 build/ubuntu \
 /bin/bash
 ```
- 
+
 ***The run statement should start a detached container, however if you are attached, detach from the container***  
 `CTL P` + `CTL Q`
 
@@ -176,23 +176,24 @@ build/ubuntu \
 __Note that because we started the build container with the name of ubuntu, we will use that in the export statement instead of the container ID.__
 
 ```bash
-docker export ubuntu | docker import - appcontainers/ubuntu:wily
+docker export ubuntu | docker import - appcontainers/ubuntu:xenial
 ```
 
 ***Verify***
 
-Issuing a `docker images` should now show a newly saved appcontainers/ubuntu:wily image, which can be pushed to the docker hub.
+Issuing a `docker images` should now show a newly saved appcontainers/ubuntu:xenial image, which can be pushed to the docker hub.
 
 ***Run the container***
-    
+
 ```bash
-docker run -it -d appcontainers/ubuntu:wily
+docker run -it -d appcontainers/ubuntu:xenial
 ```
 
 &nbsp;
 
 ># Dockerfile Changelog:
 
+    06/11/2016 - Replaced Wily with 16.06 Xenial Xerus
     12/14/2015 - Replaced Vivid with 15.10 Wily
     09/29/2015 - Add Line to .bashrc to prevent additions to the basrc to be run from SSH/SCP login
     08/07/2015 - Updated image, set to tag latest, disable IPV6.
