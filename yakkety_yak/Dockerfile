@@ -1,49 +1,49 @@
-############################################################
+###########################################################
 # Dockerfile to build the Ubuntu 16.04 Base Container
-# Based on: ubuntu:16.04
+# Based on: ubuntu:16.10
 # DATE: 07/07/15
 # COPYRIGHT: Appcontainers.com
-############################################################
+###########################################################
 
 # Set the base image in namespace/repo format.
 # To use repos that are not on the docker hub use the example.com/namespace/repo format.
-FROM library/ubuntu:16.04
+FROM library/ubuntu:16.10
 
 # File Author / Maintainer
 MAINTAINER Rich Nason rnason@appcontainers.com
 
-###################################################################
-#*************************  APP VERSIONS  *************************
-###################################################################
+###########################################################
+#*********************  APP VERSIONS  *********************
+###########################################################
 
 
-###################################################################
-#***************  OVERRIDE ENABLED ENV VARIABLES  *****************
-###################################################################
+###########################################################
+#***********  OVERRIDE ENABLED ENV VARIABLES  *************
+###########################################################
 
-ENV TERMTAG UBUNTU16.04
+ENV TERMTAG UbuntuYakketyBase
 
-###################################################################
-#******************  ADD REQUIRED APP FILES  **********************
-###################################################################
+###########################################################
+#**************  ADD REQUIRED APP FILES  ******************
+###########################################################
 
 # Enable Progress Bar
 RUN echo 'Dpkg::Progress-Fancy "1";' | tee -a /etc/apt/apt.conf.d/99progressbar
 
-###################################################################
-#*******************  UPDATES & PRE-REQS  *************************
-###################################################################
+###########################################################
+#***************  UPDATES & PRE-REQS  *********************
+###########################################################
 
 # Update, Upgrade, and Install nano.
 RUN apt-get clean && \
 apt-get update && \
 apt-get -y upgrade && \
-DEBIAN_FRONTEND=noninteractive apt-get -y install nano
+DEBIAN_FRONTEND=noninteractive apt-get -y install apt-utils curl vim python python-dev python-openssl libffi-dev libssl-dev gcc && \
+apt-get -y upgrade
 
-
-###################################################################
-#*******************  APPLICATION INSTALL  ************************
-###################################################################
+###########################################################
+#***************  APPLICATION INSTALL  ********************
+###########################################################
 
 # Get rid of some un-needed packages.
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y purge \
@@ -54,10 +54,7 @@ isc-dhcp-client \
 kbd \
 console-setup \
 xkb-data \
-vim-common \
-vim-tiny \
 bzip2 \
-apt-utils \
 python3.4 \
 python3-minimal \
 keyboard-configuration && \
@@ -68,9 +65,21 @@ rm -fr /var/lib/apt/lists/*
 # Clean up after the python install
 RUN rm -fr /usr/share/dh-python/
 
-###################################################################
-#******************  POST DEPLOY CLEAN UP  ************************
-###################################################################
+# Install pip and configure ansible
+RUN curl "https://bootstrap.pypa.io/get-pip.py" -o "/tmp/get-pip.py" && \
+python /tmp/get-pip.py && \
+pip install pip ansible --upgrade && \
+rm -fr /tmp/get-pip.py && \
+mkdir -p /etc/ansible/roles || exit 0 && \
+echo localhost ansible_connection=local > /etc/ansible/hosts
+
+###########################################################
+#**************  POST DEPLOY CLEAN UP  ********************
+###########################################################
+
+# Clean up packages we don't need now that ansible is installed
+RUN apt-get remove -y gcc python-dev libffi-dev libssl-dev && \
+apt-get autoremove -y
 
 # Strip out Locale data
 RUN for x in `ls /usr/share/locale | grep -v en_GB`; do rm -fr /usr/share/locale/$x; done;
@@ -109,9 +118,9 @@ echo "net.ipv6.conf.lo.disable_ipv6 = 1" >> /etc/sysctl.conf && \
 echo "net.ipv6.conf.eth0.disable_ipv6 = 1" >> /etc/sysctl.conf && \
 echo "net.ipv6.conf.eth1.disable_ipv6 = 1" >> /etc/sysctl.conf
 
-###################################################################
-#*****************  CONFIGURE START ITEMS  ************************
-###################################################################
+###########################################################
+#*************  CONFIGURE START ITEMS  ********************
+###########################################################
 
 ADD termcolor.sh /etc/profile.d/PS1.sh
 RUN chmod +x /etc/profile.d/PS1.sh && \
@@ -125,30 +134,30 @@ echo "\nif [[ -n \"\$SSH_CLIENT\" || -n \"\$SSH_TTY\" ]]; then\n\treturn;\nfi\n"
 
 CMD /bin/bash
 
-###################################################################
+###########################################################
 #****************  EXPOSE APPLICATION PORTS  **********************
-###################################################################
+###########################################################
 
 
-###################################################################
+###########################################################
 #*******************  OPTIONAL / LEGACY  **************************
-###################################################################
+###########################################################
 
 
 # This is not required using library/ubuntu as the build root box
-###################################################################
+###########################################################
 # Fix Init System
 # RUN dpkg-divert --local --rename --add /sbin/initctl && ln -sf /bin/true /sbin/initctl
 # RUN dpkg-divert --local --rename /usr/bin/ischroot && ln -sf /bin/true /usr/bin/ischroot
 # Fix the udev exit problem when doing an apt-get update
 # RUN sed -i '/###\ END\ INIT\ INFO/a exit\ 0' /etc/init.d/udev
-###################################################################
+###########################################################
 #########################################
 # RUN sed -i '/exit0/d' /etc/init.d/udev
 #########################################
 
 # Docker doesn't like this way of creating files.
-###################################################################
+###########################################################
 #Prevent other package documentation from being installed
 #RUN cat > /etc/dpkg/dpkg.cfg.d/01_nodoc << "EOF"
 # This config file will prevent packages from install docs that are not needed.
@@ -163,7 +172,7 @@ CMD /bin/bash
 #path-exclude /usr/share/lintian/*
 #path-exclude /usr/share/linda/*
 #EOF
-###################################################################
+###########################################################
 
 #Remove Non America TimeZone Data
 # This can be undone via: wget 'ftp://elsie.nci.nih.gov/pub/tzdata*.tar.gz'

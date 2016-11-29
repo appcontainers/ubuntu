@@ -1,5 +1,6 @@
-## Ubuntu 14.04 Trusty Tahr Base Minimal Install - 116 MB - Updated 12/14/2015 tags(trusty)  
-***This container is built from ubuntu:latest, (218 MB Before Flatification)***
+## Ubuntu 14.04 Trusty Tahr Base Minimal Install - 234 MB - Updated 11/28/2016 tags(latest, trusty)
+
+***This container is built from ubuntu:trusty, (473 MB Before Flatification)***
 
 ># Installation Steps:
 
@@ -10,8 +11,10 @@ echo 'Dpkg::Progress-Fancy "1";' | tee -a /etc/apt/apt.conf.d/99progressbar
 ```
 
 ### Install required packages
+
 ```bash
-DEBIAN_FRONTEND=noninteractive apt-get -y install nano
+DEBIAN_FRONTEND=noninteractive apt-get -y install apt-utils curl vim python python-dev python-openssl libffi-dev libssl-dev gcc
+apt-get -y upgrade
 ```
 
 ### Remove un-necessary packages
@@ -25,10 +28,7 @@ isc-dhcp-client \
 kbd \
 console-setup \
 xkb-data \
-vim-common \
-vim-tiny \
 bzip2 \
-apt-utils \
 python3.4 \
 python3-minimal \
 python3.4-minimal \
@@ -38,6 +38,30 @@ libpython3.4-stdlib:amd64 \
 keyboard-configuration && \
 
 DEBIAN_FRONTEND=noninteractive apt-get -y autoremove
+```
+
+### Clean up the python3 uninstall
+
+```bash
+rm -fr /usr/share/dh-python/
+```
+
+### Install pip and configure ansible
+
+```bash
+curl "https://bootstrap.pypa.io/get-pip.py" -o "/tmp/get-pip.py"
+python /tmp/get-pip.py
+pip install pip ansible --upgrade
+rm -fr /tmp/get-pip.py
+mkdir -p /etc/ansible/roles || exit 0
+echo localhost ansible_connection=local > /etc/ansible/hosts
+```
+
+# Clean up packages we don't need now that ansible is installed
+
+```bash
+apt-get remove -y gcc python-dev libffi-dev libssl-dev
+apt-get autoremove -y
 ```
 
 ### Strip out extra locale data
@@ -88,13 +112,15 @@ echo "net.ipv6.conf.eth0.disable_ipv6 = 1" >> /etc/sysctl.conf && \
 echo "net.ipv6.conf.eth1.disable_ipv6 = 1" >> /etc/sysctl.conf
 ```
 
-### Set the Terminal CLI Prompt  
+### Set the Terminal CLI Prompt
+
 ***Copy the included Terminal CLI Color Scheme file to /etc/profile.d so that the terminal color will be included in all child images***
 
 ```bash
+#!/bin/bash
 if [ "$PS1" ]; then
     set_prompt () {
-    Last_Command=$? # Must come first!
+    Last_Command=$?
     Blue='\[\e[01;34m\]'
     White='\[\e[01;37m\]'
     Red='\[\e[01;31m\]'
@@ -103,8 +129,8 @@ if [ "$PS1" ]; then
     Yellow='\[\e[01;33m\]'
     Black='\[\e[01;30m\]'
     Reset='\[\e[00m\]'
-    FancyX='\342\234\227'
-    Checkmark='\342\234\223'
+    FancyX=':('
+    Checkmark=':)'
 
     # If it was successful, print a green check mark. Otherwise, print a red X.
     if [[ $Last_Command == 0 ]]; then
@@ -112,20 +138,16 @@ if [ "$PS1" ]; then
     else
         PS1="$Red$FancyX "
     fi
-
-    # If root, just print the host in red. Otherwise, print the current user
-    # and host in green.
+    # If root, just print the host in red. Otherwise, print the current user and host in green.
     if [[ $EUID == 0 ]]; then
         PS1+="$Black $YellowBack $TERMTAG $Reset $Red \\u@\\h"
     else
         PS1+="$Black $YellowBack $TERMTAG $Reset $Green \\u@\\h"
     fi
-
-    # Print the working directory and prompt marker in blue, and reset
-    # the text color to the default.
+    # Print the working directory and prompt marker in blue, and reset the text color to the default.
     PS1+="$Blue\\w \\\$$Reset "
     }
-
+    
     PROMPT_COMMAND='set_prompt'
 fi
 ```
@@ -138,6 +160,7 @@ echo -e "\nif [[ -n \"\$SSH_CLIENT\" || -n \"\$SSH_TTY\" ]]; then\n\treturn;\nfi
 ```
 
 ### Set Dockerfile Runtime command
+
 ***Default command to run when lauched via docker run***
 
 ```bash
@@ -169,10 +192,12 @@ build/ubuntu \
 /bin/bash
 ```
 
-***The run statement should start a detached container, however if you are attached, detach from the container***  
+***The run statement should start a detached container, however if you are attached, detach from the container***
+
 `CTL P` + `CTL Q`
 
 ***Export and Re-import the Container***
+
 __Note that because we started the build container with the name of ubuntu, we will use that in the export statement instead of the container ID.__
 
 ```bash
@@ -193,6 +218,7 @@ docker run -it -d appcontainers/ubuntu:trusty
 
 ># Dockerfile Changelog:
 
+    11/28/2016 - Updates, added vim, python, pip, ansible to replace runconfig custom script
     06/11/2016 - Updates
     12/14/2015 - Updates
     09/29/2015 - Add Line to .bashrc to prevent additions to the basrc to be run from SSH/SCP login
