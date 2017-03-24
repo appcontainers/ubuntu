@@ -1,6 +1,6 @@
-## Ubuntu 16.10 Yakkety Yak Base Minimal Install - 208 MB - Updated 11/28/2016 (tags: yakkety)
+## Ubuntu 16.04 Xenial Xerus Base Minimal Install - 225 MB - Updated 03/24/2017 (tags: Xenial, Latest)
 
-***This container is built from ubuntu:16.10, (454 MB Before Flatification)***
+***This container is built from ubuntu:16.04, (505 MB Before Flatification)***
 
 >># Installation Steps:
 
@@ -201,25 +201,26 @@ build/ubuntu \
 __Note that because we started the build container with the name of ubuntu, we will use that in the export statement instead of the container ID.__
 
 ```bash
-docker export ubuntu | docker import - appcontainers/ubuntu:yakkety
+docker export ubuntu | docker import - appcontainers/ubuntu:xenial
 ```
 
 ***Verify***
 
-Issuing a `docker images` should now show a newly saved appcontainers/ubuntu:yakkety image, which can be pushed to the docker hub.
+Issuing a `docker images` should now show a newly saved appcontainers/ubuntu:xenial image, which can be pushed to the docker hub.
 
 ***Run the container***
 
 ```bash
-docker run -it -d appcontainers/ubuntu:yakkety
+docker run -it -d appcontainers/ubuntu:xenial
 ```
 
 &nbsp;
 
 ># Dockerfile Changelog:
 
+    03/24/2017 - Rebuild of Xenial to replace Trusty as LTS lastest
     11/28/2016 - Replaced Xerus with 16.10 Yakkety Yak, added vim, python, pip, ansible to replace runconfig custom script
-    06/11/2016 - Replaced Wily with 16.06 Xenial Xerus
+    06/11/2016 - Replaced Wily with 16.04 Xenial Xerus
     12/14/2015 - Replaced Vivid with 15.10 Wily
     09/29/2015 - Add Line to .bashrc to prevent additions to the basrc to be run from SSH/SCP login
     08/07/2015 - Updated image, set to tag latest, disable IPV6.

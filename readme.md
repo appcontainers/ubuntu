@@ -1,6 +1,6 @@
-**Ubuntu trusty/vivid/wily/xenial/yakkety Base Minimal Install - Updated 11/28/2016**
+**Ubuntu trusty/vivid/wily/xenial/yakkety Base Minimal Install - Updated 03/24/2017**
 
-**Ubuntu 16.10 Yakkety Yak Base Minimal Install - 208 MB - Updated 11/28/2016**
+**Ubuntu 16.10 Yakkety Yak Base Minimal Install - 210 MB - Updated 03/24/2017**
 
 > **Built from ubuntu:16.10**
 
@@ -11,9 +11,11 @@ http://www.appcontainers.com/appcontainersubuntuyakkety/
 
 &nbsp;
 
-**Ubuntu 16.04 Xenial Xerus Base Minimal Install - 76 MB - Updated 06/11/2016**
+**Ubuntu 16.04 Xenial Xerus Base Minimal Install - 225 MB - Updated 03/24/2017**
 
 >**Built from ubuntu:16.04**
+
+> appcontainers/ubuntu:latest
 
 > appcontainers/ubuntu:xenial
 
@@ -44,11 +46,9 @@ http://www.appcontainers.com/ubuntuvivid
 
 &nbsp;
 
-**Ubuntu 14.04 Trusty Tahr Base Minimal Install - 234 MB - Updated 11/28/2016**
+**Ubuntu 14.04 Trusty Tahr Base Minimal Install - 236 MB - Updated 03/24/2017**
 
->**Built from ubuntu:latest**
-
-> appcontainers/ubuntu:latest
+>**Built from ubuntu:trusty**
 
 > appcontainers/ubuntu:trusty
 

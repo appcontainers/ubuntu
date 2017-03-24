@@ -1,13 +1,13 @@
 ###########################################################
-# Dockerfile to build the Ubuntu 16.10 Base Container
-# Based on: ubuntu:16.10
+# Dockerfile to build the Ubuntu 16.04 Base Container
+# Based on: ubuntu:16.04 LTS
 # DATE: 07/07/15
 # COPYRIGHT: Appcontainers.com
 ###########################################################
 
 # Set the base image in namespace/repo format.
 # To use repos that are not on the docker hub use the example.com/namespace/repo format.
-FROM library/ubuntu:16.10
+FROM library/ubuntu:16.04
 
 # File Author / Maintainer
 MAINTAINER Rich Nason rnason@appcontainers.com
@@ -21,7 +21,7 @@ MAINTAINER Rich Nason rnason@appcontainers.com
 #***********  OVERRIDE ENABLED ENV VARIABLES  *************
 ###########################################################
 
-ENV TERMTAG UbuntuYakketyBase
+ENV TERMTAG UbuntuXenialBase
 
 ###########################################################
 #**************  ADD REQUIRED APP FILES  ******************
