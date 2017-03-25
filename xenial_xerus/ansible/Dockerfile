@@ -1,13 +1,13 @@
 ###########################################################
-# Dockerfile to build the Ubuntu 14.04 LTS Base Container
-# Based on: ubuntu:trusty
+# Dockerfile to build the Ubuntu 16.04 Base Ansible Container
+# Based on: ubuntu:16.04 LTS
 # DATE: 07/07/15
 # COPYRIGHT: Appcontainers.com
 ###########################################################
 
-# Set the base image in namespace/repo format. 
+# Set the base image in namespace/repo format.
 # To use repos that are not on the docker hub use the example.com/namespace/repo format.
-FROM library/ubuntu:trusty
+FROM library/ubuntu:16.04
 
 # File Author / Maintainer
 MAINTAINER Rich Nason rnason@appcontainers.com
@@ -21,7 +21,7 @@ MAINTAINER Rich Nason rnason@appcontainers.com
 #***********  OVERRIDE ENABLED ENV VARIABLES  *************
 ###########################################################
 
-ENV TERMTAG UbuntuTrustyBase
+ENV TERMTAG UbuntuXenialBase
 
 ###########################################################
 #**************  ADD REQUIRED APP FILES  ******************
@@ -34,7 +34,7 @@ RUN echo 'Dpkg::Progress-Fancy "1";' | tee -a /etc/apt/apt.conf.d/99progressbar
 #***************  UPDATES & PRE-REQS  *********************
 ###########################################################
 
-# Update, Upgrade, and Install requirements.
+# Update, Upgrade, and Install nano.
 RUN apt-get clean && \
 apt-get update && \
 apt-get -y upgrade && \
@@ -57,10 +57,6 @@ xkb-data \
 bzip2 \
 python3.4 \
 python3-minimal \
-python3.4-minimal \
-libpython3-stdlib:amd64 \
-libpython3.4-minimal:amd64 \
-libpython3.4-stdlib:amd64 \
 keyboard-configuration && \
 DEBIAN_FRONTEND=noninteractive apt-get -y autoremove && \
 apt-get clean && \
@@ -139,13 +135,14 @@ echo "\nif [[ -n \"\$SSH_CLIENT\" || -n \"\$SSH_TTY\" ]]; then\n\treturn;\nfi\n"
 CMD /bin/bash
 
 ###########################################################
-#************  EXPOSE APPLICATION PORTS  ******************
+#****************  EXPOSE APPLICATION PORTS  **********************
 ###########################################################
 
 
 ###########################################################
-#***************  OPTIONAL / LEGACY  **********************
+#*******************  OPTIONAL / LEGACY  **************************
 ###########################################################
+
 
 # This is not required using library/ubuntu as the build root box
 ###########################################################

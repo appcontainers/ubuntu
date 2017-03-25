@@ -1,8 +1,8 @@
-## Ubuntu 16.10 Yakkety Yak Base Minimal Install - 208 MB - Updated 11/28/2016 (tags: yakkety)
+## Ubuntu 14.04 Trusty Tahr Base Minimal Install - 117 MB - Updated 03/25/2017 tags(trusty)
 
-***This container is built from ubuntu:16.10, (454 MB Before Flatification)***
+***This container is built from ubuntu:trusty, (231 MB Before Flatification)***
 
->># Installation Steps:
+># Installation Steps:
 
 ### Turn on Apt Progress Output
 
@@ -13,7 +13,7 @@ echo 'Dpkg::Progress-Fancy "1";' | tee -a /etc/apt/apt.conf.d/99progressbar
 ### Install required packages
 
 ```bash
-DEBIAN_FRONTEND=noninteractive apt-get -y install apt-utils curl vim python python-dev python-openssl libffi-dev libssl-dev gcc
+DEBIAN_FRONTEND=noninteractive apt-get -y install apt-utils
 apt-get -y upgrade
 ```
 
@@ -44,24 +44,6 @@ DEBIAN_FRONTEND=noninteractive apt-get -y autoremove
 
 ```bash
 rm -fr /usr/share/dh-python/
-```
-
-### Install pip and configure ansible
-
-```bash
-curl "https://bootstrap.pypa.io/get-pip.py" -o "/tmp/get-pip.py"
-python /tmp/get-pip.py
-pip install pip ansible --upgrade
-rm -fr /tmp/get-pip.py
-mkdir -p /etc/ansible/roles || exit 0
-echo localhost ansible_connection=local > /etc/ansible/hosts
-```
-
-# Clean up packages we don't need now that ansible is installed
-
-```bash
-apt-get remove -y gcc python-dev libffi-dev libssl-dev
-apt-get autoremove -y
 ```
 
 ### Strip out extra locale data
@@ -201,26 +183,28 @@ build/ubuntu \
 __Note that because we started the build container with the name of ubuntu, we will use that in the export statement instead of the container ID.__
 
 ```bash
-docker export ubuntu | docker import - appcontainers/ubuntu:yakkety
+docker export ubuntu | docker import - appcontainers/ubuntu:trusty
 ```
 
 ***Verify***
 
-Issuing a `docker images` should now show a newly saved appcontainers/ubuntu:yakkety image, which can be pushed to the docker hub.
+Issuing a `docker images` should now show a newly saved appcontainers/ubuntu:trusty image, which can be pushed to the docker hub.
 
 ***Run the container***
 
 ```bash
-docker run -it -d appcontainers/ubuntu:yakkety
+docker run -it -d appcontainers/ubuntu:trusty
 ```
 
 &nbsp;
 
 ># Dockerfile Changelog:
 
-    11/28/2016 - Replaced Xerus with 16.10 Yakkety Yak, added vim, python, pip, ansible to replace runconfig custom script
-    06/11/2016 - Replaced Wily with 16.06 Xenial Xerus
-    12/14/2015 - Replaced Vivid with 15.10 Wily
+    03/25/2017 - Created separate build/tags for raw base and base with ansible installed
+    11/28/2016 - Updates, added vim, python, pip, ansible to replace runconfig custom script
+    06/11/2016 - Updates
+    12/14/2015 - Updates
     09/29/2015 - Add Line to .bashrc to prevent additions to the basrc to be run from SSH/SCP login
-    08/07/2015 - Updated image, set to tag latest, disable IPV6.
-    07/07/2015 - Image Created.
+    08/07/2015 - Disable IPV6
+    07/04/2015 - Switched from Ubuntu Core, to Docker Hubs library/ubuntu.. Cleanup Image, shrank from 209MB to 117MB
+    05/06/2015 - Image Created.

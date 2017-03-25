@@ -1,5 +1,5 @@
 ###########################################################
-# Dockerfile to build the Ubuntu 16.04 Base Container
+# Dockerfile to build the Ubuntu 16.04 LTS Base Container
 # Based on: ubuntu:16.04 LTS
 # DATE: 07/07/15
 # COPYRIGHT: Appcontainers.com
@@ -38,7 +38,7 @@ RUN echo 'Dpkg::Progress-Fancy "1";' | tee -a /etc/apt/apt.conf.d/99progressbar
 RUN apt-get clean && \
 apt-get update && \
 apt-get -y upgrade && \
-DEBIAN_FRONTEND=noninteractive apt-get -y install apt-utils curl vim python python-dev python-openssl libffi-dev libssl-dev gcc && \
+DEBIAN_FRONTEND=noninteractive apt-get -y install apt-utils && \
 apt-get -y upgrade
 
 ###########################################################
@@ -65,21 +65,10 @@ rm -fr /var/lib/apt/lists/*
 # Clean up after the python install
 RUN rm -fr /usr/share/dh-python/
 
-# Install pip and configure ansible
-RUN curl "https://bootstrap.pypa.io/get-pip.py" -o "/tmp/get-pip.py" && \
-python /tmp/get-pip.py && \
-pip install pip ansible --upgrade && \
-rm -fr /tmp/get-pip.py && \
-mkdir -p /etc/ansible/roles || exit 0 && \
-echo localhost ansible_connection=local > /etc/ansible/hosts
 
 ###########################################################
 #**************  POST DEPLOY CLEAN UP  ********************
 ###########################################################
-
-# Clean up packages we don't need now that ansible is installed
-RUN apt-get remove -y gcc python-dev libffi-dev libssl-dev && \
-apt-get autoremove -y
 
 # Strip out Locale data
 RUN for x in `ls /usr/share/locale | grep -v en_GB`; do rm -fr /usr/share/locale/$x; done;
