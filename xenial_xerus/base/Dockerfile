@@ -95,9 +95,9 @@ echo "path-exclude /usr/share/lintian/*" >> /etc/dpkg/dpkg.cfg.d/01_nodoc && \
 echo "path-exclude /usr/share/linda/*" >> /etc/dpkg/dpkg.cfg.d/01_nodoc
 
 # Set the default Timezone to EST
-RUN cp /etc/localtime /root/old.timezone && \
-rm -f /etc/localtime && \
-ln -s /usr/share/zoneinfo/America/New_York /etc/localtime
+RUN cp /etc/localtime /root/old.timezone | exit 0 && \
+rm -f /etc/localtime | exit 0 && \
+ln -s /usr/share/zoneinfo/America/New_York /etc/localtime | exit 0
 
 # Disable IPV6
 RUN echo "net.ipv6.conf.all.disable_ipv6=1" > /etc/sysctl.d/disableipv6.conf && \

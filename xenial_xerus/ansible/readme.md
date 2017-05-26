@@ -1,23 +1,52 @@
-## Ubuntu 16.04 Xenial Xerus Base Minimal with Ansible Install - 225 MB - Updated 03/25/2017 (tags: ansible, ansible-xenial)
+## Ubuntu 16.04 Xenial Xerus Base Minimal with Ansible Install - 230 MB - Updated 05/26/2017 (tags: ansible, ansible-xenial)
 
-***This container is built from ubuntu:16.04, (505 MB Before Flatification)***
+***This container is built from ubuntu:16.04, (477 MB Before Flatification)***
 
->># Installation Steps:
+## Installation Steps:
+-------
 
-### Turn on Apt Progress Output
+#### Turn on Apt Progress Output:
 
 ```bash
 echo 'Dpkg::Progress-Fancy "1";' | tee -a /etc/apt/apt.conf.d/99progressbar
 ```
 
-### Install required packages
+<br>
+
+#### Install required packages:
 
 ```bash
 DEBIAN_FRONTEND=noninteractive apt-get -y install apt-utils curl vim python python-dev python-openssl libffi-dev libssl-dev gcc
 apt-get -y upgrade
 ```
 
-### Remove un-necessary packages
+<br>
+
+#### Configure Ansible (Ansible Varient Only):
+
+```bash
+curl "https://bootstrap.pypa.io/get-pip.py" -o "/tmp/get-pip.py"
+python /tmp/get-pip.py
+pip install pip ansible --upgrade
+rm -fr /tmp/get-pip.py
+mkdir -p /etc/ansible/roles || exit 0
+echo localhost ansible_connection=local > /etc/ansible/hosts
+```
+
+<br>
+
+#### Uninstall un-needed packages (used for Ansible build only):
+
+```bash
+apt-get remove -y gcc python-dev libffi-dev libssl-dev
+apt-get autoremove -y 
+```
+
+<br>
+
+#### Cleanup:
+
+***Remove the contents of /var/lib/apt after a apt update or apt install which will save about 150MB from the image size***
 
 ```bash
 DEBIAN_FRONTEND=noninteractive apt-get -y purge \
@@ -31,77 +60,52 @@ xkb-data \
 bzip2 \
 python3.4 \
 python3-minimal \
-python3.4-minimal \
-libpython3-stdlib:amd64 \
-libpython3.4-minimal:amd64 \
-libpython3.4-stdlib:amd64 \
 keyboard-configuration && \
-
-DEBIAN_FRONTEND=noninteractive apt-get -y autoremove
+DEBIAN_FRONTEND=noninteractive apt-get -y autoremove && \
+apt-get clean && \
+rm -fr /var/lib/apt/lists/*
 ```
 
-### Clean up the python3 uninstall
+<br>
 
-```bash
-rm -fr /usr/share/dh-python/
-```
-
-### Install pip and configure ansible
-
-```bash
-curl "https://bootstrap.pypa.io/get-pip.py" -o "/tmp/get-pip.py"
-python /tmp/get-pip.py
-pip install pip ansible --upgrade
-rm -fr /tmp/get-pip.py
-mkdir -p /etc/ansible/roles || exit 0
-echo localhost ansible_connection=local > /etc/ansible/hosts
-```
-
-# Clean up packages we don't need now that ansible is installed
-
-```bash
-apt-get remove -y gcc python-dev libffi-dev libssl-dev
-apt-get autoremove -y
-```
-
-### Strip out extra locale data
+#### Cleanup Locales:
 
 ```bash
 for x in `ls /usr/share/locale | grep -v en_GB`; do rm -fr /usr/share/locale/$x; done;
-for x in `ls /usr/share/i18n/locales/ | grep -v en_`; do rm -fr /usr/share/i18n/locales/$x; done
+for x in `ls /usr/share/i18n/locales/ | grep -v en_`; do rm -fr /usr/share/i18n/locales/$x; done;
+rm -fr /usr/share/doc/* /usr/share/man/* /usr/share/groff/* /usr/share/info/* /usr/share/lintian/* /usr/share/linda/* /var/cache/man/* /usr/share/dh-python/
 ```
 
-### Remove Man Pages and Docs to preserve Space
+__Prevent new packages from installing un-needed docs__
 
 ```bash
-rm -fr /usr/share/doc/* /usr/share/man/* /usr/share/groff/* /usr/share/info/*
-rm -rf /usr/share/lintian/* /usr/share/linda/* /var/cache/man/*
+echo "# This config file will prevent packages from install docs that are not needed." > /etc/dpkg/dpkg.cfg.d/01_nodoc && \
+echo "" >> /etc/dpkg/dpkg.cfg.d/01_nodoc && \
+echo "path-exclude /usr/share/doc/*" >> /etc/dpkg/dpkg.cfg.d/01_nodoc && \
+echo "# we need to keep copyright files for legal reasons" >> /etc/dpkg/dpkg.cfg.d/01_nodoc && \
+echo "# path-include /usr/share/doc/*/copyright" >> /etc/dpkg/dpkg.cfg.d/01_nodoc && \
+echo "path-exclude /usr/share/man/*" >> /etc/dpkg/dpkg.cfg.d/01_nodoc && \
+echo "path-exclude /usr/share/groff/*" >> /etc/dpkg/dpkg.cfg.d/01_nodoc && \
+echo "path-exclude /usr/share/info/*" >> /etc/dpkg/dpkg.cfg.d/01_nodoc && \
+echo "" >> /etc/dpkg/dpkg.cfg.d/01_nodoc && \
+echo "# lintian stuff is small, but really unnecessary" >> /etc/dpkg/dpkg.cfg.d/01_nodoc && \
+echo "path-exclude /usr/share/lintian/*" >> /etc/dpkg/dpkg.cfg.d/01_nodoc && \
+echo "path-exclude /usr/share/linda/*" >> /etc/dpkg/dpkg.cfg.d/01_nodoc
 ```
 
-### Set documentation generation to off for future installed packages
+<br>
+
+#### Set the default Timezone to EST:
 
 ```bash
-cat > /etc/dpkg/dpkg.cfg.d/01_nodoc << "EOF"
-# This config file will prevent packages from install docs that are not needed.
-path-exclude /usr/share/doc/*
-path-exclude /usr/share/man/*
-path-exclude /usr/share/groff/*
-path-exclude /usr/share/info/*
-# lintian stuff is small, but really unnecessary
-path-exclude /usr/share/lintian/*
-path-exclude /usr/share/linda/*
-EOF
+cp /etc/localtime /root/old.timezone | exit 0 && \
+rm -f /etc/localtime | exit 0 && \
+ln -s /usr/share/zoneinfo/America/New_York /etc/localtime | exit 0
 ```
 
-### Set Time Zone to EST (America/New_York)
+<br>
 
-```bash
-cp /etc/localtime /root/old.timezone && \
-rm -f /etc/localtime && \
-ln -s /usr/share/zoneinfo/America/New_York /etc/localtime
-```
-
-### Turn off IPV6
+#### Disable IPv6:
 
 ```bash
 echo "net.ipv6.conf.all.disable_ipv6=1" > /etc/sysctl.d/disableipv6.conf && \
@@ -112,7 +116,9 @@ echo "net.ipv6.conf.eth0.disable_ipv6 = 1" >> /etc/sysctl.conf && \
 echo "net.ipv6.conf.eth1.disable_ipv6 = 1" >> /etc/sysctl.conf
 ```
 
-### Set the Terminal CLI Prompt
+<br>
+
+#### Set the Terminal CLI Prompt:
 
 ***Copy the included Terminal CLI Color Scheme file to /etc/profile.d so that the terminal color will be included in all child images***
 
@@ -152,38 +158,44 @@ if [ "$PS1" ]; then
 fi
 ```
 
-### Prevent the .bashrc from being executed via SSH or SCP sessions
+<br>
+
+#### Prevent the .bashrc from being executed via SSH or SCP sessions:
 
 ```bash
 echo -e "\nif [[ -n \"\$SSH_CLIENT\" || -n \"\$SSH_TTY\" ]]; then\n\treturn;\nfi\n" >> /root/.bashrc && \
 echo -e "\nif [[ -n \"\$SSH_CLIENT\" || -n \"\$SSH_TTY\" ]]; then\n\treturn;\nfi\n" >> /etc/skel/.bashrc
 ```
 
-### Set Dockerfile Runtime command
+<br>
+
+#### Set Dockerfile Runtime command:
 
 ***Default command to run when lauched via docker run***
 
 ```bash
 CMD /bin/bash
 ```
-&nbsp;
 
-># Building the image from the Dockerfile:
+<br>
+
+## Building the image from the Dockerfile:
+-------
 
 ```bash
 docker build -t build/ubuntu .
 ```
-&nbsp;
 
-># Packaging the final image
+<br>
+
+## Packaging the final image:
+-------
 
 Because we want to make this image as light weight as possible in terms of size, the image is flattened in order to remove the docker build tree, removing any intermediary build containers from the image. In order to remove the reversion history, the image needs to be ran, and then exported/imported. Note that just saving the image will not remove the revision history, In order to remove the revision history, the running container must be exported and then re-imported.
 
-&nbsp;
+<br>
 
-># Flatten the Image
-
-***Run the build container***
+#### Run the container build:
 
 ```bash
 docker run -it -d \
@@ -192,37 +204,48 @@ build/ubuntu \
 /bin/bash
 ```
 
-***The run statement should start a detached container, however if you are attached, detach from the container***
+***The run statement should start a detached container, however if you are attached, detach from the container*** 
 
 `CTL P` + `CTL Q`
 
-***Export and Re-import the Container***
+<br>
+
+#### Export and Re-import the Container:
 
 __Note that because we started the build container with the name of ubuntu, we will use that in the export statement instead of the container ID.__
 
 ```bash
-docker export ubuntu | docker import - appcontainers/ubuntu:xenial
+docker export ubuntu | docker import - appcontainers/ubuntu:ansible
 ```
 
-***Verify***
+<br>
 
-Issuing a `docker images` should now show a newly saved appcontainers/ubuntu:xenial image, which can be pushed to the docker hub.
+#### Verify:
 
-***Run the container***
+Issuing a `docker images` should now show a newly saved appcontainers/ubuntu:ansible image, which can be pushed to the docker hub.
+
+<br>
+
+## Run the container:
+-------
 
 ```bash
-docker run -it -d appcontainers/ubuntu:xenial
+docker run -it -d appcontainers/ubuntu:ansible
 ```
 
-&nbsp;
+<br>
 
-># Dockerfile Changelog:
+## Dockerfile Change-log:
+-------
 
-    03/25/2017 - Created separate build/tags for raw base and base with ansible installed
-    03/24/2017 - Rebuild of Xenial to replace Trusty as LTS lastest
-    11/28/2016 - Replaced Xerus with 16.10 Yakkety Yak, added vim, python, pip, ansible to replace runconfig custom script
-    06/11/2016 - Replaced Wily with 16.04 Xenial Xerus
-    12/14/2015 - Replaced Vivid with 15.10 Wily
-    09/29/2015 - Add Line to .bashrc to prevent additions to the basrc to be run from SSH/SCP login
-    08/07/2015 - Updated image, set to tag latest, disable IPV6.
-    07/07/2015 - Image Created.
+```buildlog
+05/26/2017 - Rebuild, fixed /etc/localtime build error
+03/25/2017 - Created separate build/tags for raw base and base with ansible installed
+03/24/2017 - Update to 8.7
+11/28/2016 - Update to 8.6 include python, pip, vim, and ansible to replace custom runconfig
+06/11/2016 - Update to 8.3
+12/14/2015 - Update to 8.2
+09/29/2015 - Add Line to .bashrc to prevent additions to the basrc to be run from SSH/SCP login
+08/07/2015 - Turn off IPV6
+07/03/2015 - Initial Image Build
+```

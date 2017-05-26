@@ -1,23 +1,30 @@
-## Ubuntu 14.04 Trusty Tahr Base Minimal Install - 117 MB - Updated 03/25/2017 tags(trusty)
+## Ubuntu 14.04 Trusty Tahr Base Minimal Install - 117 MB - Updated 05/26/2017 tags(trusty)
 
-***This container is built from ubuntu:trusty, (231 MB Before Flatification)***
+***This container is built from ubuntu:trusty, (221 MB Before Flatification)***
 
-># Installation Steps:
+## Installation Steps:
+-------
 
-### Turn on Apt Progress Output
+#### Turn on Apt Progress Output:
 
 ```bash
 echo 'Dpkg::Progress-Fancy "1";' | tee -a /etc/apt/apt.conf.d/99progressbar
 ```
 
-### Install required packages
+<br>
+
+#### Install required packages:
 
 ```bash
 DEBIAN_FRONTEND=noninteractive apt-get -y install apt-utils
 apt-get -y upgrade
 ```
 
-### Remove un-necessary packages
+<br>
+
+#### Cleanup:
+
+***Remove the contents of /var/lib/apt after a apt update or apt install which will save about 150MB from the image size***
 
 ```bash
 DEBIAN_FRONTEND=noninteractive apt-get -y purge \
@@ -36,46 +43,41 @@ libpython3-stdlib:amd64 \
 libpython3.4-minimal:amd64 \
 libpython3.4-stdlib:amd64 \
 keyboard-configuration && \
-
-DEBIAN_FRONTEND=noninteractive apt-get -y autoremove
+DEBIAN_FRONTEND=noninteractive apt-get -y autoremove && \
+apt-get clean && \
+rm -fr /var/lib/apt/lists/*
 ```
 
-### Clean up the python3 uninstall
+<br>
 
-```bash
-rm -fr /usr/share/dh-python/
-```
-
-### Strip out extra locale data
+#### Cleanup Locales:
 
 ```bash
 for x in `ls /usr/share/locale | grep -v en_GB`; do rm -fr /usr/share/locale/$x; done;
-for x in `ls /usr/share/i18n/locales/ | grep -v en_`; do rm -fr /usr/share/i18n/locales/$x; done
+for x in `ls /usr/share/i18n/locales/ | grep -v en_`; do rm -fr /usr/share/i18n/locales/$x; done;
+rm -fr /usr/share/doc/* /usr/share/man/* /usr/share/groff/* /usr/share/info/* /usr/share/lintian/* /usr/share/linda/* /var/cache/man/* /usr/share/dh-python/
 ```
 
-### Remove Man Pages and Docs to preserve Space
+__Prevent new packages from installing un-needed docs__
 
 ```bash
-rm -fr /usr/share/doc/* /usr/share/man/* /usr/share/groff/* /usr/share/info/*
-rm -rf /usr/share/lintian/* /usr/share/linda/* /var/cache/man/*
+echo "# This config file will prevent packages from install docs that are not needed." > /etc/dpkg/dpkg.cfg.d/01_nodoc && \
+echo "" >> /etc/dpkg/dpkg.cfg.d/01_nodoc && \
+echo "path-exclude /usr/share/doc/*" >> /etc/dpkg/dpkg.cfg.d/01_nodoc && \
+echo "# we need to keep copyright files for legal reasons" >> /etc/dpkg/dpkg.cfg.d/01_nodoc && \
+echo "# path-include /usr/share/doc/*/copyright" >> /etc/dpkg/dpkg.cfg.d/01_nodoc && \
+echo "path-exclude /usr/share/man/*" >> /etc/dpkg/dpkg.cfg.d/01_nodoc && \
+echo "path-exclude /usr/share/groff/*" >> /etc/dpkg/dpkg.cfg.d/01_nodoc && \
+echo "path-exclude /usr/share/info/*" >> /etc/dpkg/dpkg.cfg.d/01_nodoc && \
+echo "" >> /etc/dpkg/dpkg.cfg.d/01_nodoc && \
+echo "# lintian stuff is small, but really unnecessary" >> /etc/dpkg/dpkg.cfg.d/01_nodoc && \
+echo "path-exclude /usr/share/lintian/*" >> /etc/dpkg/dpkg.cfg.d/01_nodoc && \
+echo "path-exclude /usr/share/linda/*" >> /etc/dpkg/dpkg.cfg.d/01_nodoc
 ```
 
-### Set documentation generation to off for future installed packages
+<br>
 
-```bash
-cat > /etc/dpkg/dpkg.cfg.d/01_nodoc << "EOF"
-# This config file will prevent packages from install docs that are not needed.
-path-exclude /usr/share/doc/*
-path-exclude /usr/share/man/*
-path-exclude /usr/share/groff/*
-path-exclude /usr/share/info/*
-# lintian stuff is small, but really unnecessary
-path-exclude /usr/share/lintian/*
-path-exclude /usr/share/linda/*
-EOF
-```
-
-### Set Time Zone to EST (America/New_York)
+#### Set the default Timezone to EST:
 
 ```bash
 cp /etc/localtime /root/old.timezone && \
@@ -83,7 +85,9 @@ rm -f /etc/localtime && \
 ln -s /usr/share/zoneinfo/America/New_York /etc/localtime
 ```
 
-### Turn off IPV6
+<br>
+
+#### Disable IPv6:
 
 ```bash
 echo "net.ipv6.conf.all.disable_ipv6=1" > /etc/sysctl.d/disableipv6.conf && \
@@ -94,7 +98,9 @@ echo "net.ipv6.conf.eth0.disable_ipv6 = 1" >> /etc/sysctl.conf && \
 echo "net.ipv6.conf.eth1.disable_ipv6 = 1" >> /etc/sysctl.conf
 ```
 
-### Set the Terminal CLI Prompt
+<br>
+
+#### Set the Terminal CLI Prompt:
 
 ***Copy the included Terminal CLI Color Scheme file to /etc/profile.d so that the terminal color will be included in all child images***
 
@@ -134,77 +140,94 @@ if [ "$PS1" ]; then
 fi
 ```
 
-### Prevent the .bashrc from being executed via SSH or SCP sessions
+<br>
+
+#### Prevent the .bashrc from being executed via SSH or SCP sessions:
 
 ```bash
 echo -e "\nif [[ -n \"\$SSH_CLIENT\" || -n \"\$SSH_TTY\" ]]; then\n\treturn;\nfi\n" >> /root/.bashrc && \
 echo -e "\nif [[ -n \"\$SSH_CLIENT\" || -n \"\$SSH_TTY\" ]]; then\n\treturn;\nfi\n" >> /etc/skel/.bashrc
 ```
 
-### Set Dockerfile Runtime command
+<br>
+
+#### Set Dockerfile Runtime command:
 
 ***Default command to run when lauched via docker run***
 
 ```bash
 CMD /bin/bash
 ```
-&nbsp;
 
-># Building the image from the Dockerfile:
+<br>
+
+## Building the image from the Dockerfile:
+-------
 
 ```bash
-docker build -t build/ubuntu .
+docker build -t build/debian .
 ```
-&nbsp;
 
-># Packaging the final image
+<br>
+
+## Packaging the final image:
+-------
 
 Because we want to make this image as light weight as possible in terms of size, the image is flattened in order to remove the docker build tree, removing any intermediary build containers from the image. In order to remove the reversion history, the image needs to be ran, and then exported/imported. Note that just saving the image will not remove the revision history, In order to remove the revision history, the running container must be exported and then re-imported.
 
-&nbsp;
+<br>
 
-># Flatten the Image
-
-***Run the build container***
+#### Run the container build:
 
 ```bash
 docker run -it -d \
---name ubuntu \
-build/ubuntu \
+--name debian \
+build/debian \
 /bin/bash
 ```
 
-***The run statement should start a detached container, however if you are attached, detach from the container***
+***The run statement should start a detached container, however if you are attached, detach from the container*** 
 
 `CTL P` + `CTL Q`
 
-***Export and Re-import the Container***
+<br>
 
-__Note that because we started the build container with the name of ubuntu, we will use that in the export statement instead of the container ID.__
+#### Export and Re-import the Container:
 
-```bash
-docker export ubuntu | docker import - appcontainers/ubuntu:trusty
-```
-
-***Verify***
-
-Issuing a `docker images` should now show a newly saved appcontainers/ubuntu:trusty image, which can be pushed to the docker hub.
-
-***Run the container***
+__Note that because we started the build container with the name of debian, we will use that in the export statement instead of the container ID.__
 
 ```bash
-docker run -it -d appcontainers/ubuntu:trusty
+docker export debian | docker import - appcontainers/debian:latest
 ```
 
-&nbsp;
+<br>
 
-># Dockerfile Changelog:
+#### Verify:
 
-    03/25/2017 - Created separate build/tags for raw base and base with ansible installed
-    11/28/2016 - Updates, added vim, python, pip, ansible to replace runconfig custom script
-    06/11/2016 - Updates
-    12/14/2015 - Updates
-    09/29/2015 - Add Line to .bashrc to prevent additions to the basrc to be run from SSH/SCP login
-    08/07/2015 - Disable IPV6
-    07/04/2015 - Switched from Ubuntu Core, to Docker Hubs library/ubuntu.. Cleanup Image, shrank from 209MB to 117MB
-    05/06/2015 - Image Created.
+Issuing a `docker images` should now show a newly saved appcontainers/debian image, which can be pushed to the docker hub.
+
+<br>
+
+## Run the container:
+-------
+
+```bash
+docker run -it -d appcontainers/debian
+```
+
+<br>
+
+## Dockerfile Change-log:
+-------
+
+```buildlog
+05/26/2017 - Rebuild
+03/25/2017 - Created separate build/tags for raw base and base with ansible installed
+03/24/2017 - Update to 8.7
+11/28/2016 - Update to 8.6 include python, pip, vim, and ansible to replace custom runconfig
+06/11/2016 - Update to 8.3
+12/14/2015 - Update to 8.2
+09/29/2015 - Add Line to .bashrc to prevent additions to the basrc to be run from SSH/SCP login
+08/07/2015 - Turn off IPV6
+07/03/2015 - Initial Image Build
+```

@@ -1,13 +1,13 @@
 ###########################################################
-# Dockerfile to build the Ubuntu 16.10 Base Container
-# Based on: ubuntu:16.10
+# Dockerfile to build the Ubuntu 17.04 Base Container
+# Based on: ubuntu:17.04
 # DATE: 07/07/15
 # COPYRIGHT: Appcontainers.com
 ###########################################################
 
 # Set the base image in namespace/repo format.
 # To use repos that are not on the docker hub use the example.com/namespace/repo format.
-FROM library/ubuntu:16.10
+FROM library/ubuntu:17.04
 
 # File Author / Maintainer
 MAINTAINER Rich Nason rnason@appcontainers.com
@@ -21,7 +21,7 @@ MAINTAINER Rich Nason rnason@appcontainers.com
 #***********  OVERRIDE ENABLED ENV VARIABLES  *************
 ###########################################################
 
-ENV TERMTAG UbuntuYakketyBase
+ENV TERMTAG UbuntuZestyBase
 
 ###########################################################
 #**************  ADD REQUIRED APP FILES  ******************
@@ -38,7 +38,7 @@ RUN echo 'Dpkg::Progress-Fancy "1";' | tee -a /etc/apt/apt.conf.d/99progressbar
 RUN apt-get clean && \
 apt-get update && \
 apt-get -y upgrade && \
-DEBIAN_FRONTEND=noninteractive apt-get -y install apt-utils curl vim python python-dev python-openssl libffi-dev libssl-dev gcc && \
+DEBIAN_FRONTEND=noninteractive apt-get -y install apt-utils && \
 apt-get -y upgrade
 
 ###########################################################
@@ -65,29 +65,15 @@ rm -fr /var/lib/apt/lists/*
 # Clean up after the python install
 RUN rm -fr /usr/share/dh-python/
 
-# Install pip and configure ansible
-RUN curl "https://bootstrap.pypa.io/get-pip.py" -o "/tmp/get-pip.py" && \
-python /tmp/get-pip.py && \
-pip install pip ansible --upgrade && \
-rm -fr /tmp/get-pip.py && \
-mkdir -p /etc/ansible/roles || exit 0 && \
-echo localhost ansible_connection=local > /etc/ansible/hosts
-
 ###########################################################
 #**************  POST DEPLOY CLEAN UP  ********************
 ###########################################################
-
-# Clean up packages we don't need now that ansible is installed
-RUN apt-get remove -y gcc python-dev libffi-dev libssl-dev && \
-apt-get autoremove -y
 
 # Strip out Locale data
 RUN for x in `ls /usr/share/locale | grep -v en_GB`; do rm -fr /usr/share/locale/$x; done;
 RUN for x in `ls /usr/share/i18n/locales/ | grep -v en_`; do rm -fr /usr/share/i18n/locales/$x; done
 
 # Remove Documentation
-#RUN find /usr/share/doc -depth -type f ! -name copyright|xargs rm || true && \
-#find /usr/share/doc -empty|xargs rmdir || true && \
 RUN rm -fr /usr/share/doc/* /usr/share/man/* /usr/share/groff/* /usr/share/info/* && \
 rm -rf /usr/share/lintian/* /usr/share/linda/* /var/cache/man/*
 
@@ -106,9 +92,9 @@ echo "path-exclude /usr/share/lintian/*" >> /etc/dpkg/dpkg.cfg.d/01_nodoc && \
 echo "path-exclude /usr/share/linda/*" >> /etc/dpkg/dpkg.cfg.d/01_nodoc
 
 # Set the default Timezone to EST
-RUN cp /etc/localtime /root/old.timezone && \
-rm -f /etc/localtime && \
-ln -s /usr/share/zoneinfo/America/New_York /etc/localtime
+RUN cp /etc/localtime /root/old.timezone | exit 0 && \
+rm -f /etc/localtime | exit 0 && \
+ln -s /usr/share/zoneinfo/America/New_York /etc/localtime | exit 0
 
 # Disable IPV6
 RUN echo "net.ipv6.conf.all.disable_ipv6=1" > /etc/sysctl.d/disableipv6.conf && \
@@ -142,41 +128,3 @@ CMD /bin/bash
 ###########################################################
 #*******************  OPTIONAL / LEGACY  **************************
 ###########################################################
-
-
-# This is not required using library/ubuntu as the build root box
-###########################################################
-# Fix Init System
-# RUN dpkg-divert --local --rename --add /sbin/initctl && ln -sf /bin/true /sbin/initctl
-# RUN dpkg-divert --local --rename /usr/bin/ischroot && ln -sf /bin/true /usr/bin/ischroot
-# Fix the udev exit problem when doing an apt-get update
-# RUN sed -i '/###\ END\ INIT\ INFO/a exit\ 0' /etc/init.d/udev
-###########################################################
-#########################################
-# RUN sed -i '/exit0/d' /etc/init.d/udev
-#########################################
-
-# Docker doesn't like this way of creating files.
-###########################################################
-#Prevent other package documentation from being installed
-#RUN cat > /etc/dpkg/dpkg.cfg.d/01_nodoc << "EOF"
-# This config file will prevent packages from install docs that are not needed.
-#path-exclude /usr/share/doc/*
-# we need to keep copyright files for legal reasons
-# path-include /usr/share/doc/*/copyright
-#path-exclude /usr/share/man/*
-
-#path-exclude /usr/share/groff/*
-#path-exclude /usr/share/info/*
-# lintian stuff is small, but really unnecessary
-#path-exclude /usr/share/lintian/*
-#path-exclude /usr/share/linda/*
-#EOF
-###########################################################
-
-#Remove Non America TimeZone Data
-# This can be undone via: wget 'ftp://elsie.nci.nih.gov/pub/tzdata*.tar.gz'
-# RUN for x in `ls /usr/share/zoneinfo|grep -v America`; do rm -fr $x;done;
-
-# Remove hardware rules (acpi, bluetooth, pci-classes, usb-classes, keyboard)
-# RUN rm -fr /lib/udev/hwdb.d/*
