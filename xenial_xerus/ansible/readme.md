@@ -241,11 +241,11 @@ docker run -it -d appcontainers/ubuntu:ansible
 ```buildlog
 05/26/2017 - Rebuild, fixed /etc/localtime build error
 03/25/2017 - Created separate build/tags for raw base and base with ansible installed
-03/24/2017 - Update to 8.7
-11/28/2016 - Update to 8.6 include python, pip, vim, and ansible to replace custom runconfig
-06/11/2016 - Update to 8.3
-12/14/2015 - Update to 8.2
+11/28/2016 - Updates, added vim, python, pip, ansible to replace runconfig custom script
+06/11/2016 - Update to Xenial
+12/14/2015 - Updates
 09/29/2015 - Add Line to .bashrc to prevent additions to the basrc to be run from SSH/SCP login
-08/07/2015 - Turn off IPV6
-07/03/2015 - Initial Image Build
+08/07/2015 - Disable IPV6
+07/04/2015 - Switched from Ubuntu Core, to Docker Hubs library/ubuntu.. Cleanup Image, shrank from 209MB to 117MB
+05/06/2015 - Image Created
 ```
